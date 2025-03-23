@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/products")
+
 class ProductController(
     private val productService: ProductService,
     private val userRepository: UserRepository
@@ -24,7 +25,6 @@ class ProductController(
     }
 
 
-    // 3) Create a product with its variations
     @PostMapping
     fun createProduct(@RequestBody request: CreateProductRequest): ResponseEntity<ProductResponse> {
         val product = productService.createProductWithVariations(request)
