@@ -13,6 +13,18 @@ CREATE TABLE product_groups (
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
 
+CREATE TABLE product_group_assignments (
+    id BIGSERIAL PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    product_group_id BIGINT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    CONSTRAINT fk_pga_product
+        FOREIGN KEY (product_id) REFERENCES products (id),
+    CONSTRAINT fk_pga_product_group
+        FOREIGN KEY (product_group_id) REFERENCES product_groups (id)
+);
+
 CREATE TABLE team_product_groups (
     id BIGSERIAL PRIMARY KEY,
     team_id BIGINT NOT NULL,

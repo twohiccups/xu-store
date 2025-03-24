@@ -30,7 +30,13 @@ class JwtAuthFilter(
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7)
-            username = jwtService.extractUsername(token)
+            try {
+                username = jwtService.extractUsername(token)
+            } catch (e: io.jsonwebtoken.ExpiredJwtException) {
+            // Token expired; send error response and exit filter chain
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token expired")
+            return
+            }
         }
 
         if (username != null && SecurityContextHolder.getContext().authentication == null) {

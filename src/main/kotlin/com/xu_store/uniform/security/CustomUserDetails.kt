@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails
 class CustomUserDetails(private val user: User) : UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        return listOf(SimpleGrantedAuthority(user.role))
+        return listOf(SimpleGrantedAuthority("ROLE_${user.role}"))
     }
 
     // Return the hashed password stored in the 'passwordHash' column

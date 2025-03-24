@@ -16,5 +16,21 @@ interface ProductRepository: JpaRepository<Product, Long> {
 
     @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.variations WHERE p.id = :id")
     fun findByIdWithVariations(@Param("id") id: Long): Optional<Product>
+
+
+    @Query(
+        value = """
+        SELECT DISTINCT p.* 
+        FROM products p
+        JOIN product_group_assignments pga ON pga.product_id = p.id
+        JOIN team_product_groups tpg ON tpg.product_group_id = pga.product_group_id
+        WHERE tpg.team_id = :team_id
+    """,
+        nativeQuery = true
+    )
+    fun findAllByTeamId(@Param("team_id") teamId: Long?): List<Product>
 }
+
+
+
 

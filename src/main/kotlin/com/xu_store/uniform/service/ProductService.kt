@@ -4,19 +4,27 @@ import com.xu_store.uniform.dto.CreateProductRequest
 import com.xu_store.uniform.dto.UpdateProductRequest
 import com.xu_store.uniform.model.Product
 import com.xu_store.uniform.model.ProductVariation
+import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.ProductRepository
+import com.xu_store.uniform.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 
 @Service
 class ProductService (
-    val productRepository: ProductRepository
+    val productRepository: ProductRepository,
+    val userRepository: UserRepository,
 )
 {
 
     fun listAllProducts() : List<Product>  {
         return productRepository.findAllWithVariations()
+    }
+
+    fun listProductsForUser(email: String): List<Product> {
+        val user = userRepository.findByEmail(email)
+        return productRepository.findAllByTeamId(user?.team?.id)
     }
 
 
