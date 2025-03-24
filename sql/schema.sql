@@ -53,7 +53,6 @@ CREATE TABLE users (
 );
 
 
-
 -- PRODUCTS
 CREATE TABLE products (
     id BIGSERIAL PRIMARY KEY,
@@ -90,22 +89,22 @@ CREATE TABLE product_images (
         FOREIGN KEY (product_id) REFERENCES products (id)
 );
 
+CREATE TYPE order_status AS ENUM ('PENDING', 'SHIPPED', 'COMPLETED', 'CANCELLED', 'ARCHIVED');
+
 
 CREATE TABLE orders (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     team_id BIGINT,
-
-    total_amount BIGINT NOT NULL,  -- sum of all order_items' unit_price * quantity
-    status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
-
+    total_amount BIGINT NOT NULL,
+    status order_status DEFAULT 'PENDING',
+    address_line1 VARCHAR(255) NOT NULL,
+    address_line2 VARCHAR(255),
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(50) NOT NULL,
+    zip_code VARCHAR(20) NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-
-    CONSTRAINT fk_order_user
-        FOREIGN KEY (user_id) REFERENCES users (id),
-    CONSTRAINT fk_order_team
-        FOREIGN KEY (team_id) REFERENCES teams (id)
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
 
 
@@ -126,6 +125,8 @@ CREATE TABLE order_items (
     CONSTRAINT fk_oi_product_variation
         FOREIGN KEY (product_variation_id) REFERENCES product_variations (id)
 );
+
+
 
 -- Store credits
 CREATE TABLE credit_transactions (

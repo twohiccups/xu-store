@@ -48,7 +48,6 @@ class TeamController(
         return ResponseEntity.ok(TeamResponse.from(team))
     }
 
-    // 2) Delete Team
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{teamId}")
     fun deleteTeam(@PathVariable teamId: Long): ResponseEntity<Void> {
@@ -56,7 +55,6 @@ class TeamController(
         return ResponseEntity.noContent().build()
     }
 
-    // 4) Add User to the Team
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{teamId}/users/{userId}")
     fun addUserToTeam(

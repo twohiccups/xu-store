@@ -53,7 +53,6 @@ class AuthController(
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(request.username, request.password)
         )
-
         if (authentication.isAuthenticated) {
             val token = jwtService.generateToken(request.username)
             return JwtResponse(accessToken = token)

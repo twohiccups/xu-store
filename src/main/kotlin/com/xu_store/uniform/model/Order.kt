@@ -21,7 +21,23 @@ data class Order(
     @Column(name = "total_amount")
     val totalAmount: Long,
 
-    val status: String = "PENDING",
+    @Enumerated(EnumType.STRING)
+    val status: OrderStatus = OrderStatus.PENDING,
+
+    @Column(name = "address_line1", nullable = false)
+    val addressLine1: String,
+
+    @Column(name = "address_line2")
+    val addressLine2: String? = null,
+
+    @Column(name = "city", nullable = false)
+    val city: String,
+
+    @Column(name = "state", nullable = false)
+    val state: String,
+
+    @Column(name = "zip_code", nullable = false)
+    val zipCode: String,
 
     @Column(name = "created_at")
     var createdAt: LocalDateTime = LocalDateTime.now(),
