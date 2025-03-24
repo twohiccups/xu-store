@@ -12,6 +12,8 @@ docker run --name pgadmin --network postgres-network -p 5050:80 -e PGADMIN_DEFAU
 host.docker.internal
 
 
+http://localhost:8080/v3/api-docs
+
 
 
 

@@ -11,17 +11,11 @@ import java.util.*
 @Repository
 interface ProductRepository: JpaRepository<Product, Long> {
 
+
     @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.variations WHERE p.archived = false")
-    fun findAllWithVariationsNonArchived(): List<Product>
-
-    // For a given team, list only non-archived products.
-    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.variations WHERE p.archived = false AND p.team.id = :teamId")
-    fun findAllByTeamIdAndNonArchived(@Param("teamId") teamId: Long?): List<Product>
-
-    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.variations")
     fun findAllWithVariations(): List<Product>
 
-    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.variations WHERE p.id = :id")
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.variations WHERE p.id = :id and p.archived = false")
     fun findByIdWithVariations(@Param("id") id: Long): Optional<Product>
 
 
@@ -31,7 +25,8 @@ interface ProductRepository: JpaRepository<Product, Long> {
         FROM products p
         JOIN product_group_assignments pga ON pga.product_id = p.id
         JOIN team_product_groups tpg ON tpg.product_group_id = pga.product_group_id
-        WHERE tpg.team_id = :team_id
+        WHERE tpg.team_id = :team_id AND p.archived = 0
+        
     """,
         nativeQuery = true
     )

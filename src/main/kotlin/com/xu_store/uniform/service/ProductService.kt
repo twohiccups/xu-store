@@ -21,12 +21,12 @@ class ProductService (
 
 
     fun listAllProducts() : List<Product>  {
-        return productRepository.findAllWithVariationsNonArchived()
+        return productRepository.findAllWithVariations()
     }
 
     fun listProductsForUser(email: String): List<Product> {
         val user = userRepository.findByEmail(email)
-        return productRepository.findAllByTeamIdAndNonArchived(user?.team?.id)
+        return productRepository.findAllByTeamId(user?.team?.id)
     }
 
 
