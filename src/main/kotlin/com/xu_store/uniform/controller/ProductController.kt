@@ -58,6 +58,8 @@ class ProductController(
         return ResponseEntity.ok(ProductResponse.from(updatedProduct))
     }
 
+
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{productId}")
     fun deleteProduct(@PathVariable productId: Long): ResponseEntity<Void> {

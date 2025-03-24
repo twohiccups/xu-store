@@ -62,7 +62,7 @@ class ProductService (
             .orElseThrow { RuntimeException("Product not found") }
 
         // Create a lookup for update requests that refer to an existing variation
-        val requestVariationsById = request.variations
+        val requestVariationsById = request.productVariations
             .filter { it.id != null }
             .associateBy { it.id!! }
 
@@ -79,7 +79,7 @@ class ProductService (
             }
 
         // Process new variations (those with no id in the request)
-        val newVariations = request.variations
+        val newVariations = request.productVariations
             .filter { it.id == null }
             .map { newVarRequest ->
                 ProductVariation(
