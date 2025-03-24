@@ -19,7 +19,7 @@ data class Team(
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 
     // Optional: One-to-many if you want to access Users from a Team.
-    @OneToMany(mappedBy = "team", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "team", cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)
     val users: MutableList<User> = mutableListOf()
 )
 

@@ -16,5 +16,13 @@ data class ProductGroup(
     var createdAt: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    var updatedAt: LocalDateTime = LocalDateTime.now(),
+
+    // List of products assigned to this group
+    @OneToMany(mappedBy = "productGroup", cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)
+    val productGroupAssignments: MutableList<ProductGroupAssignment> = mutableListOf(),
+
+    // List of teams associated with this group
+    @OneToMany(mappedBy = "productGroup", cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)
+    val teamProductGroups: MutableList<TeamProductGroup> = mutableListOf()
 )

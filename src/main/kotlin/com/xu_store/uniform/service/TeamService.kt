@@ -1,42 +1,69 @@
 package com.xu_store.uniform.service
 
+import com.xu_store.uniform.dto.CreateTeamRequest
+import com.xu_store.uniform.dto.UpdateTeamRequest
+import com.xu_store.uniform.model.Team
+import com.xu_store.uniform.model.User
+import com.xu_store.uniform.repository.TeamRepository
+import com.xu_store.uniform.repository.UserRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
+import java.util.*
 
 @Service
-class TeamService {
+class TeamService(
+    private val teamRepository: TeamRepository,
+    private val userRepository: UserRepository
+) {
 
-    fun addUserToTeam(email: String) {
-
+    fun createTeam(request: CreateTeamRequest): Team {
+        val team = Team(
+            name = request.name,
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
+        )
+        return teamRepository.save(team)
     }
 
-    fun deleteUserFromTeam(email: String) {
+    fun updateTeam(teamId: Long, request: UpdateTeamRequest): Team {
+        val existingTeam = teamRepository.findById(teamId)
+            .orElseThrow { RuntimeException("Team not found with id: $teamId") }
+        // Update only the fields that are provided.
+        val updatedTeam = existingTeam.copy(
+            name = request.name ?: existingTeam.name,
+            updatedAt = LocalDateTime.now()
+        )
+        return teamRepository.save(updatedTeam)
+    }
 
+    fun deleteTeam(teamId: Long) {
+        teamRepository.deleteById(teamId)
+    }
+
+    @Transactional
+    fun addUserToTeam(teamId: Long, userId: Long): User {
+        val team = teamRepository.findById(teamId)
+            .orElseThrow { RuntimeException("Team not found with id: $teamId") }
+        val user = userRepository.findById(userId)
+            .orElseThrow { RuntimeException("User not found with id: $userId") }
+        // Update the user's team.
+        val updatedUser = user.copy(team = team)
+        return userRepository.save(updatedUser)
+    }
+
+    @Transactional
+    fun removeUserFromTeam(teamId: Long, userId: Long): User {
+        val user = userRepository.findById(userId)
+            .orElseThrow { RuntimeException("User not found with id: $userId") }
+        if (user.team == null || user.team?.id != teamId) {
+            throw RuntimeException("User is not a member of team with id: $teamId")
+        }
+        val updatedUser = user.copy(team = null)
+        return userRepository.save(updatedUser)
+    }
+
+    fun findTeamById(teamId: Long): Optional<Team> {
+        return teamRepository.findById(teamId)
     }
 }
-
-
-//package com.xu_store.uniform.service
-//
-//import org.springframework.stereotype.Service
-//
-//@Service
-//class TeamService {
-//
-//    fun addUserToTeam(email: String) {
-//
-//    }
-//
-//    fun deleteUserFromTeam(email: String) {
-//
-//    }
-//}
-//
-//I Now want to create
-//1) Controller for managing user's team
-//it needs endpointns for
-//
-//* Adding New Team
-//* Editing Team
-//* Deleting Team
-//* Adding user to a team
-//* Deleting user from the team

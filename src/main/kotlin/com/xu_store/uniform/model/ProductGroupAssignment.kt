@@ -4,15 +4,15 @@ import java.time.LocalDateTime
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "team_product_groups")
-data class TeamProductGroup(
+@Table(name = "product_group_assignments")
+data class ProductGroupAssignment(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id", nullable = false)
-    val team: Team,
+    @JoinColumn(name = "product_id", nullable = false)
+    val product: Product,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_group_id", nullable = false)
