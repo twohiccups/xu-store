@@ -18,13 +18,15 @@ class ProductService (
 )
 {
 
+
+
     fun listAllProducts() : List<Product>  {
-        return productRepository.findAllWithVariations()
+        return productRepository.findAllWithVariationsNonArchived()
     }
 
     fun listProductsForUser(email: String): List<Product> {
         val user = userRepository.findByEmail(email)
-        return productRepository.findAllByTeamId(user?.team?.id)
+        return productRepository.findAllByTeamIdAndNonArchived(user?.team?.id)
     }
 
 
@@ -102,6 +104,14 @@ class ProductService (
 
         // Save the updated product; since it has the same id, JPA will merge it.
         return productRepository.save(updatedProduct)
+    }
+
+    @Transactional
+    fun archiveProducts(productIds: List<Long>): List<Product> {
+        // Fetch all products with the given IDs.
+        val products = productRepository.findAllById(productIds)
+        products.forEach { it.archived = true }
+        return productRepository.saveAll(products)
     }
 
 }

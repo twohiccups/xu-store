@@ -19,9 +19,13 @@ data class Product(
     @Column(name = "updated_at")
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 
+    @Column(name = "archived")
+    var archived: Boolean = false,
+
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
     val variations: MutableList<ProductVariation> = mutableListOf(),
 
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     val images: MutableList<ProductImage> = mutableListOf()
 )
+

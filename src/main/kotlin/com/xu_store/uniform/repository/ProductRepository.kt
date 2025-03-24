@@ -11,6 +11,13 @@ import java.util.*
 @Repository
 interface ProductRepository: JpaRepository<Product, Long> {
 
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.variations WHERE p.archived = false")
+    fun findAllWithVariationsNonArchived(): List<Product>
+
+    // For a given team, list only non-archived products.
+    @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.variations WHERE p.archived = false AND p.team.id = :teamId")
+    fun findAllByTeamIdAndNonArchived(@Param("teamId") teamId: Long?): List<Product>
+
     @Query("SELECT DISTINCT p FROM Product p LEFT JOIN FETCH p.variations")
     fun findAllWithVariations(): List<Product>
 

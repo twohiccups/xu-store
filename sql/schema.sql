@@ -59,7 +59,8 @@ CREATE TABLE products (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    archived BOOLEAN NOT NULL DEFAULT false,
 );
 
 

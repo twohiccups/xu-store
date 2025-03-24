@@ -59,7 +59,6 @@ class ProductController(
     }
 
 
-
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{productId}")
     fun deleteProduct(@PathVariable productId: Long): ResponseEntity<Void> {
@@ -67,4 +66,11 @@ class ProductController(
         return ResponseEntity.noContent().build()
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/archive")
+    fun archiveProducts(@RequestBody productIds: List<Long>): ResponseEntity<List<ProductResponse>> {
+        val archivedProducts = productService.archiveProducts(productIds)
+        return ResponseEntity.ok(archivedProducts.map { ProductResponse.from(it) })
+    }
 }
