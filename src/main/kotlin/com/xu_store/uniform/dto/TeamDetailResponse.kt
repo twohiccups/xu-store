@@ -4,7 +4,7 @@ import com.xu_store.uniform.model.Team
 import java.time.LocalDateTime
 
 data class TeamDetailResponse(
-    val id: Long?,
+    val id: Long,
     val name: String,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
@@ -13,7 +13,7 @@ data class TeamDetailResponse(
     companion object {
         fun from(team: Team): TeamDetailResponse {
             return TeamDetailResponse(
-                id = team.id,
+                id = team.id!!,
                 name = team.name,
                 createdAt = team.createdAt,
                 updatedAt = team.updatedAt,

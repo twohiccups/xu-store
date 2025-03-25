@@ -3,6 +3,7 @@ package com.xu_store.uniform.service
 import com.xu_store.uniform.dto.*
 import com.xu_store.uniform.model.ProductGroup
 import com.xu_store.uniform.model.ProductGroupAssignment
+import com.xu_store.uniform.model.ProductGroupsResponse
 import com.xu_store.uniform.model.TeamProductGroup
 import com.xu_store.uniform.repository.ProductGroupAssignmentRepository
 import com.xu_store.uniform.repository.ProductGroupRepository
@@ -93,12 +94,11 @@ class ProductGroupService(
     }
 
     @Transactional
-    fun removeTeamsFromGroup(productGroupId: Long, request: RemoveTeamsFromProductGroupRequest): ProductGroup {
-        val productGroup = productGroupRepository.findById(productGroupId)
-            .orElseThrow { RuntimeException("ProductGroup not found with id: $productGroupId") }
-        productGroup.teamProductGroups.removeIf { assignment ->
-            request.teamIds.contains(assignment.team.id)
-        }
-        return productGroupRepository.save(productGroup)
+    fun removeTeamsFromGroup(productGroupId: Long, request: RemoveTeamsFromProductGroupRequest) {
+        request.teamIds.forEach { teamId -> teamProductGroupRepository.deleteByTeamIdAndGroupId(teamId, productGroupId)}
+    }
+
+    fun findAllProductGroups() : List<ProductGroup> {
+        return productGroupRepository.findAll()
     }
 }

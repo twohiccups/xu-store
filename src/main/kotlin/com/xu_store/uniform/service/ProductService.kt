@@ -38,7 +38,7 @@ class ProductService (
             description = request.description
         )
 
-        request.variations.forEach { variationRequest ->
+        request.productVariations.forEach { variationRequest ->
             val variation = ProductVariation(
                 product = product,  // associate with the product
                 variationName = variationRequest.variationName,

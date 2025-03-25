@@ -2,6 +2,7 @@ package com.xu_store.uniform.controller
 
 import com.xu_store.uniform.dto.*
 import com.xu_store.uniform.model.ProductGroupResponse
+import com.xu_store.uniform.model.ProductGroupsResponse
 import com.xu_store.uniform.service.ProductGroupService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*
 class ProductGroupController(
     private val productGroupService: ProductGroupService
 ) {
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
@@ -73,8 +75,17 @@ class ProductGroupController(
     fun removeTeamsFromGroup(
         @PathVariable groupId: Long,
         @RequestBody request: RemoveTeamsFromProductGroupRequest
-    ): ResponseEntity<ProductGroupResponse> {
-        val productGroup = productGroupService.removeTeamsFromGroup(groupId, request)
-        return ResponseEntity.ok(ProductGroupResponse.from(productGroup))
+    ): ResponseEntity<Unit> {
+        productGroupService.removeTeamsFromGroup(groupId, request)
+        return ResponseEntity.ok(Unit)
     }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping
+        fun getAllGroups() : ProductGroupsResponse {
+            val groups = productGroupService.findAllProductGroups()
+            return ProductGroupsResponse.from(groups)
+        }
 }
+
