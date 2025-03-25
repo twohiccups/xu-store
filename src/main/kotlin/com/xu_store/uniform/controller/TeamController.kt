@@ -1,10 +1,6 @@
 package com.xu_store.uniform.controller
 
-import com.xu_store.uniform.dto.CreateTeamRequest
-import com.xu_store.uniform.dto.TeamDetailResponse
-import com.xu_store.uniform.dto.TeamResponse
-import com.xu_store.uniform.dto.UpdateTeamRequest
-import com.xu_store.uniform.dto.UserResponse
+import com.xu_store.uniform.dto.*
 import com.xu_store.uniform.service.TeamService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,6 +12,15 @@ import org.springframework.web.bind.annotation.*
 class TeamController(
     private val teamService: TeamService
 ) {
+
+
+    // GET team details (including list of users) by team id.
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping()
+    fun getAllTeams(): ResponseEntity<TeamsResponse> {
+        val teams = teamService.findAll();
+        return ResponseEntity.ok(TeamsResponse.from(teams))
+    }
 
     // GET team details (including list of users) by team id.
     @PreAuthorize("hasRole('ADMIN')")

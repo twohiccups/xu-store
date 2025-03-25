@@ -66,4 +66,8 @@ class TeamService(
     fun findTeamById(teamId: Long): Optional<Team> {
         return teamRepository.findById(teamId)
     }
+
+    fun findAll(): List<Team> {
+        return teamRepository.findAll()
+    }
 }
