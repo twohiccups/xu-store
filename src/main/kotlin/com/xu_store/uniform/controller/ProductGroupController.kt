@@ -1,8 +1,8 @@
 package com.xu_store.uniform.controller
 
 import com.xu_store.uniform.dto.*
-import com.xu_store.uniform.model.ProductGroupResponse
-import com.xu_store.uniform.model.ProductGroupsResponse
+import com.xu_store.uniform.dto.ProductGroupResponse
+import com.xu_store.uniform.dto.ProductGroupsResponse
 import com.xu_store.uniform.service.ProductGroupService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

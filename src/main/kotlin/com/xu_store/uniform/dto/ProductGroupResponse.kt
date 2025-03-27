@@ -1,5 +1,6 @@
-package com.xu_store.uniform.model
+package com.xu_store.uniform.dto
 
+import com.xu_store.uniform.model.ProductGroup
 import java.time.LocalDateTime
 
 data class ProductGroupResponse(

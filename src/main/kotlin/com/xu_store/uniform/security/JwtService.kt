@@ -16,6 +16,7 @@ class JwtService {
 
     companion object {
         const val SECRET = "357638792F423F4428472B4B6250655368566D597133743677397A2443264629"
+        const val EXPIRATION_PERIOD = 1000 * 60 * 60 * 24 // 24 hours
     }
 
     fun extractUsername(token: String): String {
@@ -59,7 +60,7 @@ class JwtService {
             .setClaims(claims)
             .setSubject(username)
             .setIssuedAt(Date(System.currentTimeMillis()))
-            .setExpiration(Date(System.currentTimeMillis() + 1000 * 60 * 60)) // token valid for 60 minutes
+            .setExpiration(Date(System.currentTimeMillis() + EXPIRATION_PERIOD)) // token valid for 24 hr
             .signWith(getSignKey(), SignatureAlgorithm.HS256)
             .compact()
     }

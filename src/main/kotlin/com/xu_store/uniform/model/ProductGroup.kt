@@ -19,7 +19,7 @@ data class ProductGroup(
     var updatedAt: LocalDateTime = LocalDateTime.now(),
 
     // List of products assigned to this group
-    @OneToMany(mappedBy = "productGroup", cascade = [CascadeType.ALL ], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productGroup", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
     val productGroupAssignments: MutableList<ProductGroupAssignment> = mutableListOf(),
 
     // List of teams associated with this group

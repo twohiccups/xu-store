@@ -19,9 +19,9 @@ class ProductService (
 {
 
 
-
     fun listAllProducts() : List<Product>  {
-        return productRepository.findAllWithVariations()
+        val products = productRepository.findAllWithVariations()
+        return products
     }
 
     fun listProductsForUser(email: String): List<Product> {

@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/api/v1")
@@ -27,10 +28,10 @@ class AuthController(
      */
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    fun registerUser(@RequestBody request: AuthRequest): String {
+    fun registerUser(@RequestBody request: AuthRequest): Long? {
         // Optionally check if user already exists
         if (userRepository.findByEmail(request.username) != null) {
-            return "Username already exists!"
+            throw ResponseStatusException(HttpStatus.CONFLICT, "Username already exists!")
         }
 
         // We store a hashed password, never plaintext
@@ -40,9 +41,8 @@ class AuthController(
             email = request.username,
             passwordHash = hashedPassword,
         )
-        userRepository.save(newUser)
-
-        return "User created successfully!"
+        val user = userRepository.save(newUser)
+        return user.id
     }
 
     /**
@@ -61,11 +61,4 @@ class AuthController(
         }
     }
 
-    /**
-     * A sample endpoint that requires authentication.
-     */
-    @GetMapping("/ping")
-    fun ping(): String {
-        return "Hello, you are authenticated!"
-    }
 }

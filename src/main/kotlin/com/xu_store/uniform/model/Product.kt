@@ -26,6 +26,13 @@ data class Product(
     val variations: MutableList<ProductVariation> = mutableListOf(),
 
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    val images: MutableList<ProductImage> = mutableListOf()
-)
+    val images: MutableList<ProductImage> = mutableListOf(),
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "product_group_assignments",
+        joinColumns = [JoinColumn(name = "product_id")],
+        inverseJoinColumns = [JoinColumn(name = "product_group_id")]
+    )
+    val groups: MutableSet<ProductGroup> = mutableSetOf()
+)
