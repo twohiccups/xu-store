@@ -4,7 +4,7 @@ import com.xu_store.uniform.model.ProductGroup
 import java.time.LocalDateTime
 
 data class ProductGroupResponse(
-    val id: Long?,
+    val id: Long,
     val name: String,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
@@ -14,7 +14,7 @@ data class ProductGroupResponse(
     companion object {
         fun from(productGroup: ProductGroup): ProductGroupResponse {
             return ProductGroupResponse(
-                id = productGroup.id,
+                id = requireNotNull(productGroup.id) { "Product Group Id must not be null"},
                 name = productGroup.name,
                 createdAt = productGroup.createdAt,
                 updatedAt = productGroup.updatedAt,

@@ -9,6 +9,7 @@ import com.xu_store.uniform.repository.ProductRepository
 import com.xu_store.uniform.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.*
 
 
 @Service
@@ -19,8 +20,18 @@ class ProductService (
 {
 
 
+    fun getProductById(productId: Long) : Optional<Product> {
+        val product = productRepository.findById(productId)
+        return product
+    }
+
     fun listAllProducts() : List<Product>  {
         val products = productRepository.findAllWithVariations()
+        return products
+    }
+
+    fun listAllArchivedProducts() : List<Product>  {
+        val products = productRepository.findAllArchivedWithVariations()
         return products
     }
 
@@ -111,6 +122,14 @@ class ProductService (
         // Fetch all products with the given IDs.
         val products = productRepository.findAllById(productIds)
         products.forEach { it.archived = true }
+        return productRepository.saveAll(products)
+    }
+
+    @Transactional
+    fun unarchiveProducts(productIds: List<Long>): List<Product> {
+        // Fetch all products with the given IDs.
+        val products = productRepository.findAllById(productIds)
+        products.forEach { it.archived = false }
         return productRepository.saveAll(products)
     }
 

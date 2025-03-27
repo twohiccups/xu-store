@@ -30,8 +30,16 @@ class AuthController(
     @ResponseStatus(HttpStatus.CREATED)
     fun registerUser(@RequestBody request: AuthRequest): Long? {
         // Optionally check if user already exists
+        if (request.username.isEmpty()) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be empty")
+        }
+
         if (userRepository.findByEmail(request.username) != null) {
-            throw ResponseStatusException(HttpStatus.CONFLICT, "Username already exists!")
+            throw ResponseStatusException(HttpStatus.CONFLICT, "Username already exists")
+        }
+
+        if (request.password.isEmpty()) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be empty")
         }
 
         // We store a hashed password, never plaintext

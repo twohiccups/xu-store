@@ -34,9 +34,29 @@ class ProductController(
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{productId}")
+    fun getProductById(
+        @PathVariable productId: Long,
+    ): ResponseEntity<ProductResponse> {
+        val productOpt = productService.getProductById(productId)
+        return if (productOpt.isPresent) {
+            ResponseEntity.ok(ProductResponse.from(productOpt.get()))
+        } else {
+            ResponseEntity.notFound().build()
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     fun listAllProducts(): ResponseEntity<List<ProductResponse>> {
         val products = productService.listAllProducts();
+        return ResponseEntity.ok(products.map { ProductResponse.from(it) })
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/archived")
+    fun listAllArchivedProducts(): ResponseEntity<List<ProductResponse>> {
+        val products = productService.listAllArchivedProducts();
         return ResponseEntity.ok(products.map { ProductResponse.from(it) })
     }
 
@@ -71,6 +91,14 @@ class ProductController(
     @PutMapping("/archive")
     fun archiveProducts(@RequestBody productIds: List<Long>): ResponseEntity<List<ProductResponse>> {
         val archivedProducts = productService.archiveProducts(productIds)
+        return ResponseEntity.ok(archivedProducts.map { ProductResponse.from(it) })
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/unarchive")
+    fun unarchiveProducts(@RequestBody productIds: List<Long>): ResponseEntity<List<ProductResponse>> {
+        val archivedProducts = productService.unarchiveProducts(productIds)
         return ResponseEntity.ok(archivedProducts.map { ProductResponse.from(it) })
     }
 }

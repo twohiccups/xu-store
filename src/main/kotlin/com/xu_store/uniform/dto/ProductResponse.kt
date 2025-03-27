@@ -11,7 +11,7 @@ data class ProductsResponse(
 
 // Main DTO for a single Product.
 data class ProductResponse(
-    val id: Long?,
+    val id: Long,
     val name: String,
     val description: String?,
     val variations: List<ProductVariationResponse>,
@@ -20,7 +20,7 @@ data class ProductResponse(
     companion object {
         fun from(product: Product): ProductResponse {
             return ProductResponse(
-                id = product.id,
+                id = requireNotNull(product.id) { "Product ID must not be null"},
                 name = product.name,
                 description = product.description,
                 variations = product.variations.map { ProductVariationResponse.from(it) },
