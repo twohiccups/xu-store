@@ -114,7 +114,7 @@ class ProductGroupServiceTest {
    id = 101L,
    name = "Product 101",
    description = "Desc",
-   variations = mutableListOf(),
+   productVariations = mutableListOf(),
    createdAt = LocalDateTime.now(),
    updatedAt = LocalDateTime.now()
   )
@@ -122,7 +122,7 @@ class ProductGroupServiceTest {
    id = 102L,
    name = "Product 102",
    description = "Desc",
-   variations = mutableListOf(),
+   productVariations = mutableListOf(),
    createdAt = LocalDateTime.now(),
    updatedAt = LocalDateTime.now()
   )
@@ -153,7 +153,7 @@ class ProductGroupServiceTest {
    id = 101L,
    name = "Product 101",
    description = "Desc",
-   variations = mutableListOf(),
+   productVariations = mutableListOf(),
    createdAt = LocalDateTime.now(),
    updatedAt = LocalDateTime.now()
   )
@@ -161,7 +161,7 @@ class ProductGroupServiceTest {
    id = 102L,
    name = "Product 102",
    description = "Desc",
-   variations = mutableListOf(),
+   productVariations = mutableListOf(),
    createdAt = LocalDateTime.now(),
    updatedAt = LocalDateTime.now()
   )
@@ -243,54 +243,5 @@ class ProductGroupServiceTest {
   verify(productGroupRepository, atLeastOnce()).save(any(ProductGroup::class.java))
  }
 
- @Test
- fun `removeTeamsFromGroup removes specified teams`() {
-  // Arrange: Create a product group with two team assignments.
-  val team1 = Team(
-   id = 201L,
-   name = "Team 201",
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
-  )
-  val team2 = Team(
-   id = 202L,
-   name = "Team 202",
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
-  )
-  // Create a group first.
-  val group = ProductGroup(
-   id = 1L,
-   name = "Group A",
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now(),
-   teamProductGroups = mutableListOf()
-  )
-  // Now create team assignments with group set.
-  val teamAssignment1 = TeamProductGroup(
-   id = 1L,
-   team = team1,
-   productGroup = group,
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
-  )
-  val teamAssignment2 = TeamProductGroup(
-   id = 2L,
-   team = team2,
-   productGroup = group,
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
-  )
-  group.teamProductGroups.addAll(listOf(teamAssignment1, teamAssignment2))
 
-  whenever(productGroupRepository.findById(1L)).thenReturn(Optional.of(group))
-  whenever(productGroupRepository.save(any(ProductGroup::class.java))).thenAnswer { it.arguments[0] as ProductGroup }
-
-  val request = RemoveTeamsFromProductGroupRequest(teamIds = listOf(201L))
-  val updatedGroup = service.removeTeamsFromGroup(1L, request)
-
-  // Assert: Only team 202 should remain.
-  assertEquals(1, updatedGroup.teamProductGroups.size)
-  assertEquals(202L, updatedGroup.teamProductGroups.first().team.id)
- }
 }

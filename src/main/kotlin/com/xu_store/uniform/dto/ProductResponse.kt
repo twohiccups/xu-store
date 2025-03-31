@@ -14,7 +14,7 @@ data class ProductResponse(
     val id: Long,
     val name: String,
     val description: String?,
-    val variations: List<ProductVariationResponse>,
+    val productVariations: List<ProductVariationResponse>,
     val productGroups: ProductGroupsResponse
 ) {
     companion object {
@@ -23,7 +23,7 @@ data class ProductResponse(
                 id = requireNotNull(product.id) { "Product ID must not be null"},
                 name = product.name,
                 description = product.description,
-                variations = product.variations.map { ProductVariationResponse.from(it) },
+                productVariations = product.productVariations.map { ProductVariationResponse.from(it) },
                 // Convert the groups (which is now a Collection) into our DTO.
                 productGroups = ProductGroupsResponse.from(product.groups)
             )
@@ -33,7 +33,7 @@ data class ProductResponse(
 
 // DTO for a Product Variation.
 data class ProductVariationResponse(
-    val id: Long? = null,
+    val id: Long,
     val variationName: String,
     val price: Long,
     val createdAt: LocalDateTime,
@@ -42,7 +42,7 @@ data class ProductVariationResponse(
     companion object {
         fun from(productVariation: ProductVariation): ProductVariationResponse {
             return ProductVariationResponse(
-                id = productVariation.id,
+                id = requireNotNull(productVariation.id) {"Product Variation Id must not be null"},
                 variationName = productVariation.variationName,
                 price = productVariation.price,
                 createdAt = productVariation.createdAt,

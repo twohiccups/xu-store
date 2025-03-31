@@ -5,7 +5,7 @@ import com.xu_store.uniform.model.OrderStatus
 import java.time.LocalDateTime
 
 data class OrderResponse(
-    val id: Long?,
+    val id: Long,
     val userId: Long,
     val totalAmount: Long,
     val status: OrderStatus,
@@ -20,7 +20,7 @@ data class OrderResponse(
     companion object {
         fun from(order: Order): OrderResponse {
             return OrderResponse(
-                id = order.id,
+                id = requireNotNull(order.id) { "Order Id must not be null"},
                 userId = order.user.id ?: 0L,
                 totalAmount = order.totalAmount,
                 status = order.status,

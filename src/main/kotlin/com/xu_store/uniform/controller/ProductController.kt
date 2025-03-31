@@ -23,13 +23,12 @@ class ProductController(
     // This endpoint is available for every authenticated user (any role)
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/current")
-    fun listProductsForCurrentUser(): ResponseEntity<List<ProductResponse>> {
+    fun getProductsForCurrentUser(): ResponseEntity<List<ProductResponse>> {
         // Obtain the currently authenticated user's username
         val authentication = SecurityContextHolder.getContext().authentication
         val username = (authentication.principal as CustomUserDetails).username
 
-        // Assuming your service has a method to list products by user
-        val products = productService.listProductsForUser(username)
+        val products = productService.getProductsForUser(username)
         return ResponseEntity.ok(products.map { ProductResponse.from(it) })
     }
 
@@ -48,23 +47,23 @@ class ProductController(
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    fun listAllProducts(): ResponseEntity<List<ProductResponse>> {
-        val products = productService.listAllProducts();
+    fun getAllProducts(): ResponseEntity<List<ProductResponse>> {
+        val products = productService.getAllProducts();
         return ResponseEntity.ok(products.map { ProductResponse.from(it) })
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/archived")
-    fun listAllArchivedProducts(): ResponseEntity<List<ProductResponse>> {
-        val products = productService.listAllArchivedProducts();
+    fun getAllArchivedProducts(): ResponseEntity<List<ProductResponse>> {
+        val products = productService.getAllArchivedProducts();
         return ResponseEntity.ok(products.map { ProductResponse.from(it) })
     }
 
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    fun createProduct(@RequestBody request: CreateProductRequest): ResponseEntity<ProductResponse> {
-        val product = productService.createProductWithVariations(request)
+    fun createProduct(@RequestBody createProductRequest: CreateProductRequest): ResponseEntity<ProductResponse> {
+        val product = productService.createProductWithVariations(createProductRequest)
         return ResponseEntity.ok(ProductResponse.from(product))
     }
 
@@ -72,9 +71,9 @@ class ProductController(
     @PutMapping("/{productId}")
     fun updateProduct(
         @PathVariable productId: Long,
-        @RequestBody request: UpdateProductRequest
+        @RequestBody updateProductRequest: UpdateProductRequest
     ): ResponseEntity<ProductResponse> {
-        val updatedProduct = productService.updateProduct(productId, request)
+        val updatedProduct = productService.updateProduct(productId, updateProductRequest)
         return ResponseEntity.ok(ProductResponse.from(updatedProduct))
     }
 

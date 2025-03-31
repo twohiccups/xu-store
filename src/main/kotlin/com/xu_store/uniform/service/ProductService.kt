@@ -4,11 +4,12 @@ import com.xu_store.uniform.dto.CreateProductRequest
 import com.xu_store.uniform.dto.UpdateProductRequest
 import com.xu_store.uniform.model.Product
 import com.xu_store.uniform.model.ProductVariation
-import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.ProductRepository
 import com.xu_store.uniform.repository.UserRepository
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 
 
@@ -25,19 +26,21 @@ class ProductService (
         return product
     }
 
-    fun listAllProducts() : List<Product>  {
+    fun getAllProducts() : List<Product>  {
         val products = productRepository.findAllWithVariations()
         return products
     }
 
-    fun listAllArchivedProducts() : List<Product>  {
+    fun getAllArchivedProducts() : List<Product>  {
         val products = productRepository.findAllArchivedWithVariations()
         return products
     }
 
-    fun listProductsForUser(email: String): List<Product> {
-        val user = userRepository.findByEmail(email)
-        return productRepository.findAllByTeamId(user?.team?.id)
+    fun getProductsForUser(email: String): List<Product> {
+        val user = userRepository.findByEmail(email) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
+        val team = user.team
+            ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "User does not belong to a team")
+        return productRepository.findAllByTeamId(team.id)
     }
 
 
@@ -55,7 +58,7 @@ class ProductService (
                 variationName = variationRequest.variationName,
                 price = variationRequest.price
             )
-            product.variations.add(variation)
+            product.productVariations.add(variation)
         }
 
         // Persist the product (cascading will handle the variations)
@@ -80,7 +83,7 @@ class ProductService (
             .associateBy { it.id!! }
 
         // Process existing variations: update those still in the request.
-        val updatedExistingVariations = product.variations
+        val updatedExistingVariations = product.productVariations
             .filter { it.id in requestVariationsById.keys }
             .map { existing ->
                 val updateRequest = requestVariationsById[existing.id]!!
@@ -110,7 +113,7 @@ class ProductService (
         val updatedProduct = product.copy(
             name = request.name,
             description = request.description,
-            variations = updatedVariations
+            productVariations = updatedVariations
         )
 
         // Save the updated product; since it has the same id, JPA will merge it.

@@ -31,8 +31,8 @@ class ProductServiceTest {
     private val productService = ProductService(productRepository, userRepository)
 
     @Test
-    fun listAllProducts() {
-        productService.listAllProducts()
+    fun getAllProducts() {
+        productService.getAllProducts()
         verify(productRepository, times(1)).findAllWithVariations()
 
     }
@@ -50,7 +50,7 @@ class ProductServiceTest {
 
     @Test
     fun `listAllProducts calls repository findAllWithVariations once`() {
-        productService.listAllProducts()
+        productService.getAllProducts()
         verify(productRepository, times(1)).findAllWithVariations()
     }
 
@@ -82,7 +82,7 @@ class ProductServiceTest {
             id = 1L,
             name = "Product 1",
             description = "First product",
-            variations = mutableListOf(),
+            productVariations = mutableListOf(),
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -90,13 +90,13 @@ class ProductServiceTest {
             id = 2L,
             name = "Product 2",
             description = "Second product",
-            variations = mutableListOf(),
+            productVariations = mutableListOf(),
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
         whenever(productRepository.findAllByTeamId(teamId)).thenReturn(listOf(product1, product2))
 
-        val products = productService.listProductsForUser(email)
+        val products = productService.getProductsForUser(email)
 
         assertNotNull(products)
         assertEquals(2, products.size)
@@ -119,7 +119,7 @@ class ProductServiceTest {
         val createRequest = CreateProductRequest(
             name = "Test Product",
             description = "Test product description",
-            variations = listOf(variationRequest1, variationRequest2)
+            productVariations = listOf(variationRequest1, variationRequest2)
         )
 
         // Simulate that the repository returns the saved product with an assigned ID.
@@ -128,10 +128,10 @@ class ProductServiceTest {
             id = 1L,
             name = createRequest.name,
             description = createRequest.description,
-            variations = mutableListOf(
+            productVariations = mutableListOf(
                 // Here we simulate that variations are saved as well.
-                ProductVariation(id = 10L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, variations = mutableListOf()), variationName = "Variation A", price = 1000),
-                ProductVariation(id = 11L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, variations = mutableListOf()), variationName = "Variation B", price = 1500)
+                ProductVariation(id = 10L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, productVariations = mutableListOf()), variationName = "Variation A", price = 1000),
+                ProductVariation(id = 11L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, productVariations = mutableListOf()), variationName = "Variation B", price = 1500)
             ),
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
@@ -144,7 +144,7 @@ class ProductServiceTest {
         // Assert
         assertNotNull(result)
         assertEquals("Test Product", result.name)
-        assertEquals(2, result.variations.size)
+        assertEquals(2, result.productVariations.size)
         verify(productRepository, times(1)).save(any(Product::class.java))
     }
 
@@ -156,7 +156,7 @@ class ProductServiceTest {
             id = 1L,
             name = "Old Product Name",
             description = "Old Description",
-            variations = mutableListOf(),
+            productVariations = mutableListOf(),
             createdAt = LocalDateTime.now().minusDays(1),
             updatedAt = LocalDateTime.now().minusDays(1)
         )
@@ -168,7 +168,7 @@ class ProductServiceTest {
             variationName = "Old Variation",
             price = 1000
         )
-        existingProduct.variations.add(existingVariation)
+        existingProduct.productVariations.add(existingVariation)
 
         whenever(productRepository.findByIdWithVariations(1L)).thenReturn(Optional.of(existingProduct))
 
@@ -202,14 +202,14 @@ class ProductServiceTest {
         assertEquals("New Product Name", updatedProduct.name)
         assertEquals("New Description", updatedProduct.description)
         // Expecting two variations: one updated and one new.
-        assertEquals(2, updatedProduct.variations.size)
+        assertEquals(2, updatedProduct.productVariations.size)
 
-        val updatedExistingVariation = updatedProduct.variations.find { it.id == 100L }
+        val updatedExistingVariation = updatedProduct.productVariations.find { it.id == 100L }
         assertNotNull(updatedExistingVariation)
         assertEquals("Updated Variation", updatedExistingVariation!!.variationName)
         assertEquals(1200, updatedExistingVariation.price)
 
-        val newVariation = updatedProduct.variations.find { it.variationName == "New Variation" }
+        val newVariation = updatedProduct.productVariations.find { it.variationName == "New Variation" }
         assertNotNull(newVariation)
         assertEquals(1500, newVariation!!.price)
 

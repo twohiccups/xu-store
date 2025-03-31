@@ -13,7 +13,7 @@ data class TeamDetailResponse(
     companion object {
         fun from(team: Team): TeamDetailResponse {
             return TeamDetailResponse(
-                id = team.id!!,
+                id = requireNotNull(team.id) {"Team Id must not be null"},
                 name = team.name,
                 createdAt = team.createdAt,
                 updatedAt = team.updatedAt,

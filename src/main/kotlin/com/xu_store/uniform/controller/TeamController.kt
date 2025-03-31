@@ -14,7 +14,6 @@ class TeamController(
 ) {
 
 
-    // GET team details (including list of users) by team id.
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
     fun getAllTeams(): ResponseEntity<TeamsResponse> {
@@ -22,7 +21,6 @@ class TeamController(
         return ResponseEntity.ok(TeamsResponse.from(teams))
     }
 
-    // GET team details (including list of users) by team id.
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{teamId}")
     fun getTeamById(@PathVariable teamId: Long): ResponseEntity<TeamDetailResponse> {
@@ -48,9 +46,9 @@ class TeamController(
     fun updateTeam(
         @PathVariable teamId: Long,
         @RequestBody request: UpdateTeamRequest
-    ): ResponseEntity<TeamResponse> {
+    ): ResponseEntity<TeamDetailResponse> {
         val team = teamService.updateTeam(teamId, request)
-        return ResponseEntity.ok(TeamResponse.from(team))
+        return ResponseEntity.ok(TeamDetailResponse.from(team))
     }
 
     @PreAuthorize("hasRole('ADMIN')")

@@ -5,6 +5,7 @@ import com.xu_store.uniform.dto.JwtResponse
 import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.UserRepository
 import com.xu_store.uniform.security.JwtService
+import com.xu_store.uniform.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -14,12 +15,13 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/auth")
 class AuthController(
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val jwtService: JwtService,
     private val authenticationManager: AuthenticationManager,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+
 ) {
 
     /**
@@ -34,7 +36,7 @@ class AuthController(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be empty")
         }
 
-        if (userRepository.findByEmail(request.username) != null) {
+        if (userService.getUserByEmail(request.username) != null) {
             throw ResponseStatusException(HttpStatus.CONFLICT, "Username already exists")
         }
 
@@ -49,7 +51,7 @@ class AuthController(
             email = request.username,
             passwordHash = hashedPassword,
         )
-        val user = userRepository.save(newUser)
+        val user = userService.saveUser(newUser)
         return user.id
     }
 
