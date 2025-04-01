@@ -45,7 +45,7 @@ class SecurityConfig(
             .csrf { it.disable() }
             .authorizeHttpRequests {
                 // Only open login and register; the rest will be secured at the method level
-                it.requestMatchers("/api/v1/login", "/api/v1/register", "v3/api-docs/**").permitAll()
+                it.requestMatchers("/api/auth/login", "/api/auth/register", "/v3/api-docs/**").permitAll()
                 it.anyRequest().authenticated()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }

@@ -1,12 +1,17 @@
 package com.xu_store.uniform.controller
 
+import com.example.demo.security.CustomUserDetails
 import com.xu_store.uniform.dto.CreateOrderRequest
 import com.xu_store.uniform.dto.OrderResponse
+import com.xu_store.uniform.dto.ProductResponse
 import com.xu_store.uniform.model.User
 import com.xu_store.uniform.service.OrderService
+import com.xu_store.uniform.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
 import java.time.LocalDateTime
@@ -14,27 +19,23 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/api/orders")
 class OrderController(
-    private val orderService: OrderService
+    private val orderService: OrderService,
+    private val userService: UserService
 ) {
 
-    // Endpoint for a user to place an order.
+
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     fun placeOrder(
         @RequestBody request: CreateOrderRequest,
-        principal: Principal  // Assume Principal.name gives the user's email
     ): ResponseEntity<OrderResponse> {
         // In production, you should retrieve the full User entity from your security context.
         // Here we simulate by creating a stub user.
-        val user = User(
-            id = 1L,
-            email = principal.name,
-            passwordHash = "",
-            role = "USER",
-            storeCredits = 0,
-            team = null,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
-        )
+        val authentication = SecurityContextHolder.getContext().authentication
+        val email = (authentication.principal as CustomUserDetails).username
+
+        val user = userService.getUserByEmail(email)
+        requireNotNull(user) { "User is not found"}
         val order = orderService.placeOrder(request, user)
         return ResponseEntity.status(HttpStatus.CREATED).body(OrderResponse.from(order))
     }

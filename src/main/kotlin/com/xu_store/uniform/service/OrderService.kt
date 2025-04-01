@@ -19,16 +19,19 @@ class OrderService(
 
     @Transactional
     fun placeOrder(request: CreateOrderRequest, user: User): Order {
-        // Validate order items, ensuring that the user is allowed to order them.
-        // (This validation logic is omitted for brevity.)
 
-        // Compute total amount.
-        val totalAmount = request.orderItems.sumOf { it.quantity * it.unitPrice.toLong() }
+        val totalAmount = request.orderItems.sumOf {
+            it.quantity *  productRepository.findVariationPrice(it.productVariationId).get()
+        }
 
-        // Create the order.
+        val difference = user.storeCredits - totalAmount
+        require(difference >= 0) {"Not enough store credits"}
+
+        val userCopy = user.copy(storeCredits = difference)
+
         val order = Order(
-            user = user,
-            team = user.team,  // if user belongs to a team
+            user = userCopy,
+            team = userCopy.team,  // if user belongs to a team
             totalAmount = totalAmount,
             status = OrderStatus.PENDING,
             addressLine1 = request.addressLine1,
@@ -39,9 +42,6 @@ class OrderService(
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
-
-        // In a complete implementation, you would also map each OrderItemRequest to an OrderItem entity
-        // and add them to order.orderItems. For brevity, that part is omitted.
 
         return orderRepository.save(order)
     }
