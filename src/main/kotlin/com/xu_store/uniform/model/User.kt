@@ -30,4 +30,6 @@ data class User(
 
     @Column(name = "updated_at")
     var updatedAt: LocalDateTime = LocalDateTime.now()
+
+
 )

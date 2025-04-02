@@ -7,6 +7,7 @@ import com.xu_store.uniform.model.OrderStatus
 import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.OrderRepository
 import com.xu_store.uniform.repository.ProductRepository
+import com.xu_store.uniform.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -14,6 +15,7 @@ import java.time.LocalDateTime
 @Service
 class OrderService(
     private val orderRepository: OrderRepository,
+    private val userRepository: UserRepository,
     private val productRepository: ProductRepository // For validation; assume we check allowed items
 ) {
 
@@ -27,11 +29,10 @@ class OrderService(
         val difference = user.storeCredits - totalAmount
         require(difference >= 0) {"Not enough store credits"}
 
-        val userCopy = user.copy(storeCredits = difference)
 
         val order = Order(
-            user = userCopy,
-            team = userCopy.team,  // if user belongs to a team
+            user = user,
+            team = user.team,  // if user belongs to a team
             totalAmount = totalAmount,
             status = OrderStatus.PENDING,
             addressLine1 = request.addressLine1,
@@ -42,12 +43,18 @@ class OrderService(
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
-
-        return orderRepository.save(order)
+        val processedOrder = orderRepository.save(order)
+        val userCopy = user.copy(storeCredits = difference)
+        userRepository.save(userCopy)
+        return processedOrder
     }
 
     fun getAllOrders(): List<Order> {
         return orderRepository.findAll()
+    }
+
+    fun getAllOrdersByTeam(teamId: Long): List<Order> {
+        return orderRepository.findAllByTeamId(teamId)
     }
 
     fun getOrdersByUser(userId: Long): List<Order> {

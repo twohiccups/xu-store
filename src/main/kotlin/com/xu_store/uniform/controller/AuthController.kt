@@ -43,7 +43,6 @@ class AuthController(
         if (request.password.isEmpty()) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Password cannot be empty")
         }
-
         // We store a hashed password, never plaintext
         val hashedPassword = passwordEncoder.encode(request.password)
 
@@ -60,17 +59,20 @@ class AuthController(
      */
     @PostMapping("/login")
     fun authenticateAndGetToken(@RequestBody request: AuthRequest): JwtResponse {
-        println(request)
-        println(request.username)
-        println(request.password)
+        println("DID IT ")
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(request.username, request.password)
         )
 
+        println("GO THRU?")
+
+
         if (authentication.isAuthenticated) {
             val token = jwtService.generateToken(request.username)
+            println(token)
             return JwtResponse(accessToken = token)
         } else {
+            print("OYOYOY")
             throw UsernameNotFoundException("Invalid user request!")
         }
     }

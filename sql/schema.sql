@@ -2,6 +2,7 @@
 CREATE TABLE teams (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    shipping_fee BIGINT NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
@@ -99,6 +100,8 @@ CREATE TABLE orders (
     team_id BIGINT,
     total_amount BIGINT NOT NULL,
     status order_status DEFAULT 'PENDING',
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
     address_line1 VARCHAR(255) NOT NULL,
     address_line2 VARCHAR(255),
     city VARCHAR(100) NOT NULL,

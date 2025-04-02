@@ -20,6 +20,7 @@ class TeamService(
     fun createTeam(request: CreateTeamRequest): Team {
         val team = Team(
             name = request.name,
+            shippingFee = request.shippingFee,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -32,6 +33,7 @@ class TeamService(
         // Update only the fields that are provided.
         val updatedTeam = existingTeam.copy(
             name = request.name ?: existingTeam.name,
+            shippingFee = request.shippingFee,
             updatedAt = LocalDateTime.now()
         )
         return teamRepository.save(updatedTeam)

@@ -6,6 +6,7 @@ import java.time.LocalDateTime
 data class TeamDetailResponse(
     val id: Long,
     val name: String,
+    val shippingFee: Long,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
     val users: List<UserResponse>
@@ -17,6 +18,7 @@ data class TeamDetailResponse(
                 name = team.name,
                 createdAt = team.createdAt,
                 updatedAt = team.updatedAt,
+                shippingFee = team.shippingFee,
                 users = team.users.map { UserResponse.from(it) }
             )
         }

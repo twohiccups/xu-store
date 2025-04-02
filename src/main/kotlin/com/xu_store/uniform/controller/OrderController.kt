@@ -2,6 +2,7 @@ package com.xu_store.uniform.controller
 
 import com.example.demo.security.CustomUserDetails
 import com.xu_store.uniform.dto.CreateOrderRequest
+import com.xu_store.uniform.dto.CreateOrderResponse
 import com.xu_store.uniform.dto.OrderResponse
 import com.xu_store.uniform.dto.ProductResponse
 import com.xu_store.uniform.model.User
@@ -28,7 +29,7 @@ class OrderController(
     @PostMapping
     fun placeOrder(
         @RequestBody request: CreateOrderRequest,
-    ): ResponseEntity<OrderResponse> {
+    ): ResponseEntity<CreateOrderResponse> {
         // In production, you should retrieve the full User entity from your security context.
         // Here we simulate by creating a stub user.
         val authentication = SecurityContextHolder.getContext().authentication
@@ -36,11 +37,25 @@ class OrderController(
 
         val user = userService.getUserByEmail(email)
         requireNotNull(user) { "User is not found"}
-        val order = orderService.placeOrder(request, user)
-        return ResponseEntity.status(HttpStatus.CREATED).body(OrderResponse.from(order))
+        try {
+            val order = orderService.placeOrder(request, user)
+            val createOrderResponse = CreateOrderResponse(
+                success = true,
+                errorMessage = null,
+                orderResponse = OrderResponse.from(order)
+            )
+            return ResponseEntity.status(HttpStatus.CREATED).body(createOrderResponse)
+
+        } catch ( e: IllegalArgumentException) {
+            val createOrderResponse = CreateOrderResponse(
+                success = false,
+                errorMessage = e.message,
+                orderResponse = null
+            )
+            return ResponseEntity.status(HttpStatus.CREATED).body(createOrderResponse)
+        }
     }
 
-    // Endpoint for admin to view all orders.
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     fun getAllOrders(): ResponseEntity<List<OrderResponse>> {
@@ -49,6 +64,13 @@ class OrderController(
         return ResponseEntity.ok(response)
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/team/{teamId}")
+    fun getAllOrdersByTeam(@PathVariable teamId: Long): ResponseEntity<List<OrderResponse>> {
+        val orders = orderService.getAllOrdersByTeam(teamId)
+        val response = orders.map { OrderResponse.from(it) }
+        return ResponseEntity.ok(response)
+    }
 
     // Optional: Endpoint for a user to view their own orders.
     @GetMapping("/my")
