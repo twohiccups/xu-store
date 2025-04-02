@@ -26,11 +26,9 @@ data class Order(
 
     @Column(name = "first_name", nullable = false)
     val firstName: String,
-
-
+    
     @Column(name = "last_name", nullable = false)
     val lastName: String,
-
 
     @Column(name = "address_line1", nullable = false)
     val addressLine1: String,

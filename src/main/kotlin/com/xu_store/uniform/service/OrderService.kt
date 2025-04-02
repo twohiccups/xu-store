@@ -3,6 +3,7 @@ package com.xu_store.uniform.service
 import com.xu_store.uniform.dto.CreateOrderRequest
 import com.xu_store.uniform.dto.OrderItemRequest
 import com.xu_store.uniform.model.Order
+import com.xu_store.uniform.model.OrderItem
 import com.xu_store.uniform.model.OrderStatus
 import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.OrderRepository
@@ -23,18 +24,20 @@ class OrderService(
     fun placeOrder(request: CreateOrderRequest, user: User): Order {
 
         val totalAmount = request.orderItems.sumOf {
-            it.quantity *  productRepository.findVariationPrice(it.productVariationId).get()
+            it.quantity * productRepository.findVariationPrice(it.productVariationId).get()
         }
 
         val difference = user.storeCredits - totalAmount
-        require(difference >= 0) {"Not enough store credits"}
+        require(difference >= 0) { "Not enough store credits" }
 
-
+        // Create the order without order items first
         val order = Order(
             user = user,
-            team = user.team,  // if user belongs to a team
+            team = user.team,
             totalAmount = totalAmount,
             status = OrderStatus.PENDING,
+            firstName = request.firstName,
+            lastName = request.lastName,
             addressLine1 = request.addressLine1,
             addressLine2 = request.addressLine2,
             city = request.city,
@@ -43,11 +46,35 @@ class OrderService(
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
+
+        // Build OrderItems with the new order reference
+        val newOrderItems = request.orderItems.map { orderItemRequest ->
+            val product = productRepository.getProductByProductVariations_Id(orderItemRequest.productVariationId)
+            val productVariation = productRepository.findProductVariationById(orderItemRequest.productVariationId).get()
+            OrderItem(
+                order = order, // Use the unsaved order; cascade will take care of it
+                product = product,
+                productVariation = productVariation,
+                quantity = orderItemRequest.quantity,
+                unitPrice = productVariation.price,
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now()
+            )
+        }
+
+        // Add the OrderItems to the Order
+        order.orderItems.addAll(newOrderItems)
+
+        // Save the order (cascading will persist the order items)
         val processedOrder = orderRepository.save(order)
+
+        // Update user store credits
         val userCopy = user.copy(storeCredits = difference)
         userRepository.save(userCopy)
+
         return processedOrder
     }
+
 
     fun getAllOrders(): List<Order> {
         return orderRepository.findAll()
@@ -56,6 +83,9 @@ class OrderService(
     fun getAllOrdersByTeam(teamId: Long): List<Order> {
         return orderRepository.findAllByTeamId(teamId)
     }
+
+
+
 
     fun getOrdersByUser(userId: Long): List<Order> {
         return orderRepository.findAllByUserId(userId)

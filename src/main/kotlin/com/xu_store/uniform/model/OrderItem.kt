@@ -15,6 +15,10 @@ data class OrderItem(
     val order: Order,
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    val product: Product,
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_variation_id", nullable = false)
     val productVariation: ProductVariation,
 
