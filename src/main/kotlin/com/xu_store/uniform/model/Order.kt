@@ -18,6 +18,9 @@ data class Order(
     @JoinColumn(name = "team_id")
     val team: Team? = null,
 
+    @Column(name = "shipping_fee")
+    val shippingFee: Long,
+
     @Column(name = "total_amount")
     val totalAmount: Long,
 

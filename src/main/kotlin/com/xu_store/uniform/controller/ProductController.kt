@@ -27,8 +27,8 @@ class ProductController(
         // Obtain the currently authenticated user's username
         val authentication = SecurityContextHolder.getContext().authentication
         val username = (authentication.principal as CustomUserDetails).username
-
         val products = productService.getProductsForUser(username)
+        // TODO(USE USERPRODUCTRESPONSE)
         return ResponseEntity.ok(products.map { ProductResponse.from(it) })
     }
 

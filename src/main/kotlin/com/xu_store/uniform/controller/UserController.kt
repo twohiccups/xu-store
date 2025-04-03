@@ -1,9 +1,12 @@
 package com.xu_store.uniform.controller
 
 import com.example.demo.security.CustomUserDetails
+import com.xu_store.uniform.dto.ShoppingInfoResponse
 import com.xu_store.uniform.dto.UserResponse
 import com.xu_store.uniform.model.User
+import com.xu_store.uniform.service.TeamService
 import com.xu_store.uniform.service.UserService
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,9 +15,13 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users")
-class UserController(private val userService: UserService) {
+class UserController(
+    private val userService: UserService,
+    private val teamService: TeamService
+) {
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/no-teams")
     fun getUsersWithoutTeams(): List<UserResponse> {
         val userResponseList = userService.getUsersWithoutTeams().map {
@@ -24,13 +31,18 @@ class UserController(private val userService: UserService) {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/store-credits")
-    fun getCurrentUserStoreCredits(): Long {
+    @GetMapping("/shopping-info")
+    fun getCurrentShoppingInfo(): ResponseEntity<ShoppingInfoResponse> {
         val authorization = SecurityContextHolder.getContext().authentication
         val email =  (authorization.principal as CustomUserDetails).username
         val user = userService.getUserByEmail(email)
         requireNotNull(user) {"User doesn't exist"}
-        return user.storeCredits
+
+        return ResponseEntity.ok(
+            ShoppingInfoResponse(
+                storeCredits = requireNotNull(user.storeCredits),
+                shippingFee = requireNotNull(user.team?.shippingFee)
+        ))
     }
 }
 

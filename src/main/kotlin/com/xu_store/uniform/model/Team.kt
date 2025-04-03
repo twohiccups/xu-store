@@ -23,6 +23,7 @@ data class Team(
 
     // Optional: One-to-many if you want to access Users from a Team.
     @OneToMany(mappedBy = "team", cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)
+    @OrderBy ("email ASC")
     val users: MutableList<User> = mutableListOf()
 )
 

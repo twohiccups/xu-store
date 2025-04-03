@@ -98,6 +98,7 @@ CREATE TABLE orders (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     team_id BIGINT,
+    shipping_fee total_amount BIGINT DEFAULT 0,
     total_amount BIGINT NOT NULL,
     status order_status DEFAULT 'PENDING',
     first_name VARCHAR(100) NOT NULL,

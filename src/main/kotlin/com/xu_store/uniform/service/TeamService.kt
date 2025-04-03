@@ -65,11 +65,11 @@ class TeamService(
         return userRepository.save(updatedUser)
     }
 
-    fun findTeamById(teamId: Long): Optional<Team> {
+    fun getTeamById(teamId: Long): Optional<Team> {
         return teamRepository.findById(teamId)
     }
 
-    fun findAll(): List<Team> {
-        return teamRepository.findAll()
+    fun getAll(): List<Team> {
+        return teamRepository.findAllByOrderByCreatedAtDesc()
     }
 }

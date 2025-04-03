@@ -17,14 +17,14 @@ class TeamController(
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
     fun getAllTeams(): ResponseEntity<TeamsResponse> {
-        val teams = teamService.findAll();
+        val teams = teamService.getAll();
         return ResponseEntity.ok(TeamsResponse.from(teams))
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{teamId}")
     fun getTeamById(@PathVariable teamId: Long): ResponseEntity<TeamDetailResponse> {
-        val teamOpt = teamService.findTeamById(teamId)
+        val teamOpt = teamService.getTeamById(teamId)
         if (teamOpt.isEmpty) {
             return ResponseEntity.notFound().build()
         }

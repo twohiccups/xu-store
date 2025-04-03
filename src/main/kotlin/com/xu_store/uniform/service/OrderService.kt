@@ -34,6 +34,7 @@ class OrderService(
         val order = Order(
             user = user,
             team = user.team,
+            shippingFee = requireNotNull(user.team?.shippingFee),
             totalAmount = totalAmount,
             status = OrderStatus.PENDING,
             firstName = request.firstName,

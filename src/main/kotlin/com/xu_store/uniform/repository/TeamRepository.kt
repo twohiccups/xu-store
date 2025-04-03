@@ -6,4 +6,8 @@ import org.springframework.stereotype.Repository
 
 
 @Repository
-interface TeamRepository : JpaRepository<Team, Long>
+interface TeamRepository : JpaRepository<Team, Long> {
+    fun findAllByOrderByCreatedAtDesc(): List<Team>
+
+}
+
