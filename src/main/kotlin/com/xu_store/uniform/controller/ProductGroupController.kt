@@ -23,6 +23,17 @@ class ProductGroupController(
         return ResponseEntity.status(HttpStatus.CREATED).body(ProductGroupResponse.from(productGroup))
     }
 
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{groupId}")
+    fun getProductGroupById(
+        @PathVariable groupId: Long,
+    ): ResponseEntity<ProductGroupResponse> {
+        val productGroup = productGroupService.getProductGroup(groupId).get()
+        return ResponseEntity.ok(ProductGroupResponse.from(productGroup))
+    }
+
+
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{groupId}")
     fun updateProductGroup(

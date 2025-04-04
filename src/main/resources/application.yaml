@@ -14,3 +14,9 @@ spring:
     user:
       name: user
       password: pass
+aws:
+  s3:
+    bucket-name: xu-store-images
+    region: us-east-2
+  access-key:
+  secret-key:

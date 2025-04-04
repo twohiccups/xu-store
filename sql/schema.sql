@@ -1,7 +1,7 @@
 -- Teams
 CREATE TABLE teams (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL UNIQUE,
     shipping_fee BIGINT NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
@@ -9,7 +9,7 @@ CREATE TABLE teams (
 
 CREATE TABLE product_groups (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
@@ -74,8 +74,10 @@ CREATE TABLE product_variations (
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
 
     CONSTRAINT fk_variation_product
-        FOREIGN KEY (product_id) REFERENCES products (id)
+        FOREIGN KEY (product_id) REFERENCES products (id),
+    CONSTRAINT unique_product_variation UNIQUE (product_id, variation_name)
 );
+
 
 
 CREATE TABLE product_images (

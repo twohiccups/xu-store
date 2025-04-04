@@ -12,6 +12,7 @@ import com.xu_store.uniform.repository.TeamRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.*
 
 @Service
 class ProductGroupService(
@@ -31,9 +32,13 @@ class ProductGroupService(
         return productGroupRepository.save(productGroup)
     }
 
-    fun updateProductGroup(id: Long, request: UpdateProductGroupRequest): ProductGroup {
-        val existingGroup = productGroupRepository.findById(id)
-            .orElseThrow { RuntimeException("ProductGroup not found with id: $id") }
+    fun getProductGroup(groupId: Long): Optional<ProductGroup> {
+        return productGroupRepository.findById(groupId)
+    }
+
+    fun updateProductGroup(groupId: Long, request: UpdateProductGroupRequest): ProductGroup {
+        val existingGroup = productGroupRepository.findById(groupId)
+            .orElseThrow { RuntimeException("ProductGroup not found with id: $groupId") }
         val updatedGroup = existingGroup.copy(
             name = request.name ?: existingGroup.name,
             updatedAt = LocalDateTime.now()
