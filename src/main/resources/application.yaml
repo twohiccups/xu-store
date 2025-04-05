@@ -20,3 +20,5 @@ aws:
     region: us-east-2
   access-key:
   secret-key:
+  cloudfront:
+    base-url: https://d9x4fl33eon73.cloudfront.net

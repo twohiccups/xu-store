@@ -23,6 +23,6 @@ data class ProductGroup(
     val productGroupAssignments: MutableList<ProductGroupAssignment> = mutableListOf(),
 
     // List of teams associated with this group
-    @OneToMany(mappedBy = "productGroup", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "productGroup", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
     val teamProductGroups: MutableList<TeamProductGroup> = mutableListOf()
 )

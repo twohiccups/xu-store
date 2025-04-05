@@ -3,6 +3,7 @@ package com.xu_store.uniform.service
 import com.xu_store.uniform.dto.CreateProductRequest
 import com.xu_store.uniform.dto.UpdateProductRequest
 import com.xu_store.uniform.model.Product
+import com.xu_store.uniform.model.ProductImage
 import com.xu_store.uniform.model.ProductVariation
 import com.xu_store.uniform.repository.ProductRepository
 import com.xu_store.uniform.repository.UserRepository
@@ -10,13 +11,14 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import java.time.LocalDateTime
 import java.util.*
 
 
 @Service
 class ProductService (
-    val productRepository: ProductRepository,
-    val userRepository: UserRepository,
+    private val productRepository: ProductRepository,
+    private val userRepository: UserRepository,
 )
 {
 
@@ -43,6 +45,25 @@ class ProductService (
         return productRepository.findAllByTeamId(team.id)
     }
 
+    @Transactional
+    fun saveImage(product: Product, imageUrl: String): ProductImage {
+        val newImage = ProductImage(
+            product = product,
+            imageUrl = imageUrl,
+            createdAt = LocalDateTime.now(),
+            updatedAt = LocalDateTime.now()
+        )
+        product.images.add(newImage)
+        val savedProduct = productRepository.save(product)
+        val savedImage = requireNotNull(savedProduct.images.find { image -> image.imageUrl == imageUrl })
+        return savedImage
+    }
+
+    @Transactional
+    fun deleteImageById(product: Product, imageId: Long) {
+        product.images.removeIf { image -> image.id == imageId }
+        productRepository.save(product)
+    }
 
     @Transactional
     fun createProductWithVariations(request: CreateProductRequest): Product {

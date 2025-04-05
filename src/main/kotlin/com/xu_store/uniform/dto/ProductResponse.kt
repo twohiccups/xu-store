@@ -15,6 +15,7 @@ data class ProductResponse(
     val name: String,
     val description: String?,
     val productVariations: List<ProductVariationResponse>,
+    val productImages: List<ProductImageResponse>,
     val productGroups: ProductGroupsResponse
 ) {
     companion object {
@@ -24,7 +25,7 @@ data class ProductResponse(
                 name = product.name,
                 description = product.description,
                 productVariations = product.productVariations.map { ProductVariationResponse.from(it) },
-                // Convert the groups (which is now a Collection) into our DTO.
+                productImages = product.images.map {image -> ProductImageResponse.from(image)},
                 productGroups = ProductGroupsResponse.from(product.groups)
             )
         }

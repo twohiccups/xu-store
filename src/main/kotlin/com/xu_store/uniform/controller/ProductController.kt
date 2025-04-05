@@ -2,9 +2,7 @@ package com.xu_store.uniform.controller
 
 
 import com.example.demo.security.CustomUserDetails
-import com.xu_store.uniform.dto.CreateProductRequest
-import com.xu_store.uniform.dto.UpdateProductRequest
-import com.xu_store.uniform.dto.ProductResponse
+import com.xu_store.uniform.dto.*
 import com.xu_store.uniform.repository.UserRepository
 import com.xu_store.uniform.service.ProductService
 import org.springframework.http.ResponseEntity
@@ -44,6 +42,28 @@ class ProductController(
             ResponseEntity.notFound().build()
         }
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{productId}/images")
+    fun saveProductImage(
+        @PathVariable productId: Long,
+        @RequestBody saveImageRequest: SaveImageRequest
+    ): ResponseEntity<ProductImageResponse> {
+        val product = productService.getProductById(productId).get()
+        val productImage = productService.saveImage(product, saveImageRequest.imageUrl )
+        return ResponseEntity.ok(ProductImageResponse.from(productImage))
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{productId}/images/{imageId}")
+    fun deleteProductImage(
+        @PathVariable productId: Long,
+        @PathVariable imageId: Long,
+    ) {
+        val product = productService.getProductById(productId).get()
+        productService.deleteImageById(product, imageId)
+    }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping

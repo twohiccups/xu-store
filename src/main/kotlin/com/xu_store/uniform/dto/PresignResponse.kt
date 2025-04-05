@@ -1,3 +1,15 @@
 package com.xu_store.uniform.dto
 
-data class PresignResponse(val url: String)
+import com.xu_store.uniform.model.PresignResult
+
+data class PresignResponse(val presignedUrl: String, val objectKey: String, val publicUrl: String) {
+    companion object {
+        fun from(presignResult: PresignResult): PresignResponse {
+            return PresignResponse(
+                presignedUrl = presignResult.presignedUrl,
+                objectKey = presignResult.objectKey,
+                publicUrl = presignResult.publicUrl
+            )
+        }
+    }
+}

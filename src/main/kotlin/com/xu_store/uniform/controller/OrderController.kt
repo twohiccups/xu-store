@@ -73,11 +73,13 @@ class OrderController(
     }
 
     // Optional: Endpoint for a user to view their own orders.
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/my")
-    fun getMyOrders(principal: Principal): ResponseEntity<List<OrderResponse>> {
-        // In production, retrieve the actual user's ID from the security context.
-        val userId = 1L  // Stub value.
-        val orders = orderService.getOrdersByUser(userId)
+    fun getMyOrders(): ResponseEntity<List<OrderResponse>> {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val email = (authentication.principal as CustomUserDetails).username
+        val userId = requireNotNull(userService.getUserByEmail(email)?.id)
+        val orders = orderService.getOrdersByUserId(userId)
         val response = orders.map { OrderResponse.from(it) }
         return ResponseEntity.ok(response)
     }

@@ -19,11 +19,11 @@ class ImagesController(
         @PathVariable productId: Long,
         @RequestBody request: PresignRequest
     ): PresignResponse {
-        val presignedUrl = s3PresignerService.generatePresignedUrl(
+        val presignedResult = s3PresignerService.generatePresignedUrl(
             productId,
             request.filename,
             request.contentType
         )
-        return PresignResponse(url = presignedUrl)
+        return PresignResponse.from(presignedResult)
     }
 }
