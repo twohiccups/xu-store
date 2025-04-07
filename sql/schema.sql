@@ -7,6 +7,55 @@ CREATE TABLE teams (
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
 );
 
+-- User
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'USER',
+    store_credits BIGINT NOT NULL DEFAULT 0,
+    team_id BIGINT,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    CONSTRAINT fk_user_team
+        FOREIGN KEY (team_id) REFERENCES teams (id)
+);
+
+-- PRODUCTS
+CREATE TABLE products (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    archived BOOLEAN NOT NULL DEFAULT false
+);
+
+CREATE TABLE product_variations (
+    id BIGSERIAL PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    variation_name VARCHAR(255) NOT NULL,
+    price BIGINT NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    CONSTRAINT fk_variation_product
+        FOREIGN KEY (product_id) REFERENCES products (id),
+    CONSTRAINT unique_product_variation UNIQUE (product_id, variation_name)
+);
+
+
+
+CREATE TABLE product_images (
+    id BIGSERIAL PRIMARY KEY,
+    product_id BIGINT NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    CONSTRAINT fk_product_images
+        FOREIGN KEY (product_id) REFERENCES products (id)
+);
+
+
 CREATE TABLE product_groups (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
@@ -40,57 +89,6 @@ CREATE TABLE team_product_groups (
         FOREIGN KEY (product_group_id) REFERENCES product_groups (id),
     CONSTRAINT uq_tpg_team_product_groups
         UNIQUE (team_id, product_group_id)
-
-);
-
--- User
-CREATE TABLE users (
-    id BIGSERIAL PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL DEFAULT 'USER',
-    store_credits BIGINT NOT NULL DEFAULT 0,
-    team_id BIGINT,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    CONSTRAINT fk_user_team
-        FOREIGN KEY (team_id) REFERENCES teams (id)
-);
-
-
--- PRODUCTS
-CREATE TABLE products (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    archived BOOLEAN NOT NULL DEFAULT false
-);
-
-
-CREATE TABLE product_variations (
-    id BIGSERIAL PRIMARY KEY,
-    product_id BIGINT NOT NULL,
-    variation_name VARCHAR(255) NOT NULL,
-    price BIGINT NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    CONSTRAINT fk_variation_product
-        FOREIGN KEY (product_id) REFERENCES products (id),
-    CONSTRAINT unique_product_variation UNIQUE (product_id, variation_name)
-);
-
-
-
-CREATE TABLE product_images (
-    id BIGSERIAL PRIMARY KEY,
-    product_id BIGINT NOT NULL,
-    image_url VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    CONSTRAINT fk_product_images
-        FOREIGN KEY (product_id) REFERENCES products (id)
 );
 
 CREATE TYPE order_status AS ENUM ('PENDING', 'SHIPPED', 'COMPLETED', 'CANCELLED', 'ARCHIVED');
