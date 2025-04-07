@@ -1,13 +1,14 @@
 jwt:
-  secret:
+  secret: ${JWT_SECRET}
   expiration-period: 86400000 # in milliseconds (24 hours)
 spring:
   application:
     name: store
   datasource:
-    url:
-    username:
-    password:
+    url: ${DB_URL}
+    driver-class-name: org.postgresql.Driver
+    username:  ${DB_USERNAME}
+    password:  ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 2
       minimum-idle: 0             # ❗ Don't hold idle connections
@@ -19,20 +20,20 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false               # Can generate unnecessary query traffic in production
+    show-sql: false
     properties:
       hibernate:
         connection:
-          release_mode: after_transaction  # ❗ Close DB connection ASAP after transaction
+          release_mode: after_transaction  # Close DB connection ASAP after transaction
   security:
     user:
-      name: user
-      password: pass
+      name: ${SPRING_SECURITY_USERNAME}
+      password: ${SPRING_SECURITY_PASSWORD}
 aws:
   s3:
     bucket-name: xu-store-images
     region: us-east-2
-  access-key:
-  secret-key:
+  access-key: ${AWS_ACCESS_KEY_ID}
+  secret-key: ${AWS_SECRET_ACCESS_KEY}
   cloudfront:
-    base-url: https://d9x4fl33eon73.cloudfront.net
+    base-url: ${CLOUDFRONT_BASE_URL}
