@@ -217,13 +217,15 @@ class ProductGroupServiceTest {
    id = 201L,
    name = "Team 201",
    createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
+   updatedAt = LocalDateTime.now(),
+   shippingFee = 0
   )
   val team2 = Team(
    id = 202L,
    name = "Team 202",
    createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
+   updatedAt = LocalDateTime.now(),
+   shippingFee = 0,
   )
   whenever(teamRepository.findById(201L)).thenReturn(Optional.of(team1))
   whenever(teamRepository.findById(202L)).thenReturn(Optional.of(team2))

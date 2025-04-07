@@ -13,7 +13,7 @@ data class Team(
     val name: String,
 
     @Column(name = "shipping_fee")
-    var shippingFee: Long,
+    var shippingFee: Long = 0,
 
     @Column(name = "created_at")
     var createdAt: LocalDateTime = LocalDateTime.now(),

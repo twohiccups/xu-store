@@ -1,18 +1,17 @@
-# Stage 1: Build the application using Maven and Eclipse Temurin OpenJDK 17
-FROM maven:3.9.9-eclipse-temurin-17-alpine AS builder
+# Stage 1: Build the application using Maven and a JDK image
+FROM maven:3.9.3-eclipse-temurin-17-alpine AS build
 WORKDIR /app
-# Copy the pom.xml and source code into the image
+# Copy the pom and source code; leveraging Docker cache for dependencies
 COPY pom.xml .
-COPY src/ ./src/
-# Build the project and package it, skipping tests for faster builds
-RUN mvn clean package -DskipTests
+RUN mvn dependency:go-offline -B
+COPY src ./src
+RUN mvn package -DskipTests -B
 
-# Stage 2: Create the runtime image using Eclipse Temurin OpenJDK 17
-FROM eclipse-temurin:17-jdk-alpine
+# Stage 2: Create a minimal runtime image
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-# Copy the generated jar from the builder stage; adjust the jar name if necessary
-COPY --from=builder /app/target/uniform-0.0.1-SNAPSHOT.jar app.jar
-# Expose the default Spring Boot port
+
+# Copy the jar from the build stage; adjust the jar name as needed
+COPY --from=build /app/target/uniform-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-# Start the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

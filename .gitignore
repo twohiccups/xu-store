@@ -27,8 +27,12 @@ application-local.yaml
 /nbdist/
 /.nb-gradle/
 build/
+/out
 !**/src/main/**/build/
 !**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+
+
+

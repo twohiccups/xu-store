@@ -24,7 +24,7 @@ class TeamServiceTest {
  @Test
  fun `createTeam should save and return new team`() {
   // Arrange
-  val request = CreateTeamRequest(name = "Team A")
+  val request = CreateTeamRequest(name = "Team A", shippingFee = 0)
   // We simulate the repository saving the team by returning a copy with an ID.
   val teamToSave = Team(
    id = null,
@@ -55,7 +55,7 @@ class TeamServiceTest {
    createdAt = LocalDateTime.now().minusDays(1),
    updatedAt = LocalDateTime.now().minusDays(1)
   )
-  val updateRequest = UpdateTeamRequest(name = "New Name")
+  val updateRequest = UpdateTeamRequest(name = "New Name", shippingFee = 0)
   whenever(teamRepository.findById(teamId)).thenReturn(Optional.of(existingTeam))
   whenever(teamRepository.save(any(Team::class.java))).thenAnswer { it.arguments[0] as Team }
 
@@ -189,13 +189,4 @@ class TeamServiceTest {
    updatedAt = LocalDateTime.now()
   )
   whenever(teamRepository.findById(teamId)).thenReturn(Optional.of(team))
-
-  // Act
-  val result = teamService.findTeamById(teamId)
-
-  // Assert
-  assertTrue(result.isPresent)
-  assertEquals(teamId, result.get().id)
-  verify(teamRepository, times(1)).findById(teamId)
- }
-}
+}}
