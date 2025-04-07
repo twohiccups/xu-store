@@ -1,5 +1,6 @@
 package com.xu_store.uniform.security
 
+import com.xu_store.uniform.config.JwtConfig
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -12,12 +13,9 @@ import java.util.*
 import java.util.function.Function
 
 @Component
-class JwtService {
-
-    companion object {
-        const val SECRET = "357638792F423F4428472B4B6250655368566D597133743677397A2443264629"
-        const val EXPIRATION_PERIOD = 1000 * 60 * 60 * 24 // 24 hours
-    }
+class JwtService (
+    private val jwtConfig: JwtConfig
+) {
 
     fun extractUsername(token: String): String {
         return extractClaim(token, Function { claims: Claims -> claims.subject })
@@ -60,13 +58,13 @@ class JwtService {
             .setClaims(claims)
             .setSubject(username)
             .setIssuedAt(Date(System.currentTimeMillis()))
-            .setExpiration(Date(System.currentTimeMillis() + EXPIRATION_PERIOD)) // token valid for 24 hr
+            .setExpiration(Date(System.currentTimeMillis() + jwtConfig.expirationPeriod)) // token valid for 24 hr
             .signWith(getSignKey(), SignatureAlgorithm.HS256)
             .compact()
     }
 
     private fun getSignKey(): Key {
-        val keyBytes: ByteArray = Decoders.BASE64.decode(SECRET)
+        val keyBytes: ByteArray = Decoders.BASE64.decode(jwtConfig.secret)
         return Keys.hmacShaKeyFor(keyBytes)
     }
 }

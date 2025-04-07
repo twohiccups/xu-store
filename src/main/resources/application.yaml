@@ -1,15 +1,29 @@
+jwt:
+  secret:
+  expiration-period: 86400000 # in milliseconds (24 hours)
 spring:
   application:
     name: store
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: myuser
-    password: mypass
-    driver-class-name: org.postgresql.Driver
+    url:
+    username:
+    password:
+    hikari:
+      maximum-pool-size: 2
+      minimum-idle: 0             # ❗ Don't hold idle connections
+      idle-timeout: 30000         # 30s, close idle connections quickly
+      max-lifetime: 60000         # 60s, close old connections
+      connection-timeout: 10000   # Fail fast if DB not responsive
+      auto-commit: false          # Avoid unnecessary commits
+      pool-name: NeonHikariPool
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false               # Can generate unnecessary query traffic in production
+    properties:
+      hibernate:
+        connection:
+          release_mode: after_transaction  # ❗ Close DB connection ASAP after transaction
   security:
     user:
       name: user
