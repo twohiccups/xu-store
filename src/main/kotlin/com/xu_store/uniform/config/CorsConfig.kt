@@ -16,7 +16,7 @@ class CorsConfig(private val corsProperties: CorsProps) {
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:3000")
+        configuration.allowedOrigins = corsProperties.allowedOrigins
         configuration.allowedMethods = listOf("*")
         configuration.allowedHeaders = listOf("*")
         val source: UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()

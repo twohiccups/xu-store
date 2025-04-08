@@ -27,7 +27,7 @@ import java.util.*
 class SecurityConfig(
     private val userDetailsServiceImpl: UserDetailsServiceImpl,
     private val jwtAuthFilter: JwtAuthFilter,
-//    private val corsConfig: CorsConfig
+    private val corsConfig: CorsConfig
 ) {
 
     @Bean
@@ -50,7 +50,7 @@ class SecurityConfig(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .cors {
-                cors -> cors.configurationSource(corsConfigurationSource())
+                cors -> cors.configurationSource(corsConfig.corsConfigurationSource())
             }
             .csrf { it.disable() }
             .authorizeHttpRequests {
@@ -66,16 +66,6 @@ class SecurityConfig(
     }
 
 
-    @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource {
-        val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:4444")
-        configuration.allowedMethods = listOf("*")
-        configuration.allowedHeaders = listOf("*")
-        val source: UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", configuration)
-        return source
-    }
 }
 
 
