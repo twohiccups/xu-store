@@ -59,20 +59,13 @@ class AuthController(
      */
     @PostMapping("/login")
     fun authenticateAndGetToken(@RequestBody request: AuthRequest): JwtResponse {
-        println("DID IT ")
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(request.username, request.password)
         )
-
-        println("GO THRU?")
-
-
         if (authentication.isAuthenticated) {
             val token = jwtService.generateToken(request.username)
-            println(token)
             return JwtResponse(accessToken = token)
         } else {
-            print("OYOYOY")
             throw UsernameNotFoundException("Invalid user request!")
         }
     }
