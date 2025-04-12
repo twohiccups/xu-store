@@ -38,7 +38,7 @@ class ProductService (
         return products
     }
 
-    fun getProductsForUser(email: String): List<Product> {
+    fun getProductsForUserByEmail(email: String): List<Product> {
         val user = userRepository.findByEmail(email) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
         val team = user.team
             ?: throw ResponseStatusException(HttpStatus.FORBIDDEN, "User does not belong to a team")

@@ -9,7 +9,9 @@ import com.xu_store.uniform.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -22,12 +24,11 @@ class OrderController(
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     fun placeOrder(
+        @AuthenticationPrincipal currentUser: CustomUserDetails,
         @RequestBody request: CreateOrderRequest,
     ): ResponseEntity<CreateOrderResponse> {
-        val authentication = SecurityContextHolder.getContext().authentication
-        val email = (authentication.principal as CustomUserDetails).username
 
-        val user = userService.getUserByEmail(email)
+        val user = userService.getUserByEmail(currentUser.username)
         requireNotNull(user) { "User is not found"}
         try {
             val order = orderService.placeOrder(request, user)
@@ -66,11 +67,9 @@ class OrderController(
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/my")
-    fun getMyOrders(): ResponseEntity<List<OrderResponse>> {
-        val authentication = SecurityContextHolder.getContext().authentication
-        val email = (authentication.principal as CustomUserDetails).username
-        val userId = requireNotNull(userService.getUserByEmail(email)?.id)
-        val orders = orderService.getOrdersByUserId(userId)
+    fun getMyOrders(@AuthenticationPrincipal currentUser: CustomUserDetails): ResponseEntity<List<OrderResponse>> {
+        val user = userService.getUserByEmail(currentUser.username) ?: throw UsernameNotFoundException("User doesn't exist")
+        val orders = orderService.getOrdersByUserId(requireNotNull(user.id))
         val response = orders.map { OrderResponse.from(it) }
         return ResponseEntity.ok(response)
     }

@@ -7,7 +7,9 @@ import com.xu_store.uniform.service.TeamService
 import com.xu_store.uniform.service.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -31,11 +33,9 @@ class UserController(
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/shopping-info")
-    fun getCurrentShoppingInfo(): ResponseEntity<ShoppingInfoResponse> {
-        val authorization = SecurityContextHolder.getContext().authentication
-        val email =  (authorization.principal as CustomUserDetails).username
-        val user = userService.getUserByEmail(email)
-        requireNotNull(user) {"User doesn't exist"}
+    fun getCurrentShoppingInfo(@AuthenticationPrincipal currentUser: CustomUserDetails): ResponseEntity<ShoppingInfoResponse> {
+        val user = userService.getUserByEmail(currentUser.username) ?: throw UsernameNotFoundException("User doesn't exist")
+
 
         return ResponseEntity.ok(
             ShoppingInfoResponse(

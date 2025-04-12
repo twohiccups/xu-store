@@ -5,9 +5,12 @@ import com.xu_store.uniform.dto.*
 import com.xu_store.uniform.repository.UserRepository
 import com.xu_store.uniform.security.CustomUserDetails
 import com.xu_store.uniform.service.ProductService
+import com.xu_store.uniform.service.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -15,18 +18,15 @@ import org.springframework.web.bind.annotation.*
 
 class ProductController(
     private val productService: ProductService,
-    private val userRepository: UserRepository
+    private val userService: UserService
 ) {
 
     // This endpoint is available for every authenticated user (any role)
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/current")
-    fun getProductsForCurrentUser(): ResponseEntity<List<ProductResponse>> {
-        // Obtain the currently authenticated user's username
-        val authentication = SecurityContextHolder.getContext().authentication
-        val username = (authentication.principal as CustomUserDetails).username
-        val products = productService.getProductsForUser(username)
-        // TODO(USE USERPRODUCTRESPONSE)
+    fun getProductsForCurrentUser(@AuthenticationPrincipal currentUser: CustomUserDetails): ResponseEntity<List<ProductResponse>> {
+        val user = userService.getUserByEmail(currentUser.username) ?: throw UsernameNotFoundException("User doesn't exist")
+        val products = productService.getProductsForUserByEmail(user.email)
         return ResponseEntity.ok(products.map { ProductResponse.from(it) })
     }
 
