@@ -107,9 +107,16 @@ class AuthServiceTests () {
         whenever(authenticationManager.authenticate(any())).thenReturn(mockAuthentication)
         whenever(mockAuthentication.isAuthenticated).thenReturn(true)
         whenever(jwtService.generateToken(testUsername)).thenReturn(testJwt)
-
         authService.loginUser(testUsername, testPassword)
         verify(jwtService, times(1)).generateToken(testUsername)
+    }
+
+    @Test
+    fun `given user login, when bad credentials then exception is thrown`() {
+        whenever(authenticationManager.authenticate(any())).thenReturn(mockAuthentication)
+        whenever(mockAuthentication.isAuthenticated).thenReturn(false)
+        whenever(jwtService.generateToken(testUsername)).thenReturn(testJwt)
+        assertFailsWith<UsernameNotFoundException> {   authService.loginUser(testUsername, testPassword) }
     }
 
 }
