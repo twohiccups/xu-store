@@ -17,7 +17,7 @@ class TeamController(
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping()
     fun getAllTeams(): ResponseEntity<TeamsResponse> {
-        val teams = teamService.getAll();
+        val teams = teamService.getAll()
         return ResponseEntity.ok(TeamsResponse.from(teams))
     }
 

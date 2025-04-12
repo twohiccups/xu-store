@@ -1,9 +1,8 @@
 package com.xu_store.uniform.controller
 
-import com.example.demo.security.CustomUserDetails
 import com.xu_store.uniform.dto.ShoppingInfoResponse
 import com.xu_store.uniform.dto.UserResponse
-import com.xu_store.uniform.model.User
+import com.xu_store.uniform.security.CustomUserDetails
 import com.xu_store.uniform.service.TeamService
 import com.xu_store.uniform.service.UserService
 import org.springframework.http.ResponseEntity

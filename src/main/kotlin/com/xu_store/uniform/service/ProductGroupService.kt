@@ -40,7 +40,7 @@ class ProductGroupService(
         val existingGroup = productGroupRepository.findById(groupId)
             .orElseThrow { RuntimeException("ProductGroup not found with id: $groupId") }
         val updatedGroup = existingGroup.copy(
-            name = request.name ?: existingGroup.name,
+            name = request.name,
             updatedAt = LocalDateTime.now()
         )
         return productGroupRepository.save(updatedGroup)

@@ -5,15 +5,9 @@ import com.xu_store.uniform.model.Product
 import com.xu_store.uniform.model.ProductGroup
 import com.xu_store.uniform.model.ProductGroupAssignment
 import com.xu_store.uniform.model.Team
-import com.xu_store.uniform.model.TeamProductGroup
-import com.xu_store.uniform.repository.ProductGroupAssignmentRepository
-import com.xu_store.uniform.repository.ProductGroupRepository
-import com.xu_store.uniform.repository.ProductRepository
-import com.xu_store.uniform.repository.TeamProductGroupRepository
-import com.xu_store.uniform.repository.TeamRepository
+import com.xu_store.uniform.repository.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.mockito.kotlin.whenever
@@ -35,6 +29,7 @@ class ProductGroupServiceTest {
   productRepository,
   teamRepository
  )
+
 
  @Test
  fun `createProductGroup creates and returns new product group`() {

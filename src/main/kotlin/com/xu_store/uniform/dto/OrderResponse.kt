@@ -1,7 +1,6 @@
 package com.xu_store.uniform.dto
 
 import com.xu_store.uniform.model.Order
-import com.xu_store.uniform.model.OrderItem
 import com.xu_store.uniform.model.OrderStatus
 import java.time.LocalDateTime
 

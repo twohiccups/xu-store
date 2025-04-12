@@ -1,9 +1,9 @@
 package com.xu_store.uniform.controller
 
 
-import com.example.demo.security.CustomUserDetails
 import com.xu_store.uniform.dto.*
 import com.xu_store.uniform.repository.UserRepository
+import com.xu_store.uniform.security.CustomUserDetails
 import com.xu_store.uniform.service.ProductService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -68,14 +68,14 @@ class ProductController(
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     fun getAllProducts(): ResponseEntity<List<ProductResponse>> {
-        val products = productService.getAllProducts();
+        val products = productService.getAllProducts()
         return ResponseEntity.ok(products.map { ProductResponse.from(it) })
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/archived")
     fun getAllArchivedProducts(): ResponseEntity<List<ProductResponse>> {
-        val products = productService.getAllArchivedProducts();
+        val products = productService.getAllArchivedProducts()
         return ResponseEntity.ok(products.map { ProductResponse.from(it) })
     }
 

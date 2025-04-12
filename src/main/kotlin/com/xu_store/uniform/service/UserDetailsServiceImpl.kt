@@ -1,6 +1,7 @@
-package com.xu_store.uniform.repository
+package com.xu_store.uniform.service
 
-import com.example.demo.security.CustomUserDetails
+import com.xu_store.uniform.security.CustomUserDetails
+import com.xu_store.uniform.repository.UserRepository
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException

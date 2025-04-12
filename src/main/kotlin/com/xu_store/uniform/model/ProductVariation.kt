@@ -1,8 +1,7 @@
 package com.xu_store.uniform.model
 
-import com.xu_store.uniform.model.Product
-import java.time.LocalDateTime
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "product_variations")

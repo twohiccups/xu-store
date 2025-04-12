@@ -1,6 +1,5 @@
 package com.xu_store.uniform.service
 
-import com.xu_store.uniform.dto.CreateCreditTransactionResponse
 import com.xu_store.uniform.dto.CreditTransactionRequest
 import com.xu_store.uniform.model.CreditTransaction
 import com.xu_store.uniform.repository.CreditTransactionRepository

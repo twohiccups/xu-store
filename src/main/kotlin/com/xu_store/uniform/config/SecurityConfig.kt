@@ -1,10 +1,9 @@
 package com.xu_store.uniform.config
 
-import com.xu_store.uniform.repository.UserDetailsServiceImpl
+import com.xu_store.uniform.service.UserDetailsServiceImpl
 import com.xu_store.uniform.security.JwtAuthFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
@@ -15,11 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
-import java.beans.Customizer
-import java.util.*
 
 
 @Configuration
@@ -54,9 +48,10 @@ class SecurityConfig(
             }
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                it.requestMatchers("/api/auth/login", "/api/auth/register", "/v3/api-docs/**").permitAll()
-                it.anyRequest().authenticated()
+//                it.requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+//                it.requestMatchers("/api/auth/login", "/api/auth/register", "/v3/api-docs/**").permitAll()
+//                it.anyRequest().authenticated()
+                it.anyRequest().permitAll()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authenticationProvider(authenticationProvider())

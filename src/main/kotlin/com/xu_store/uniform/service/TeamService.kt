@@ -32,7 +32,7 @@ class TeamService(
             .orElseThrow { RuntimeException("Team not found with id: $teamId") }
         // Update only the fields that are provided.
         val updatedTeam = existingTeam.copy(
-            name = request.name ?: existingTeam.name,
+            name = request.name,
             shippingFee = request.shippingFee,
             updatedAt = LocalDateTime.now()
         )

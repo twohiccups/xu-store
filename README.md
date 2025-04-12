@@ -17,6 +17,17 @@ http://localhost:8080/v3/api-docs
 
 
 
+$ ssh -i xu-key-pair-hell.pem ec2-user@ec2-3-133-191-197.us-east-2.compute.amazonaws.com
+
+
+$ ssh -i xu-key-pair-hell.pem ec2-user@ec2-172-31-9-186.us-east-2.compute.amazonaws.com
+
+172-31-9-186
+
+
+ping xu-web-api-env-new.eba-8qvkpake.us-east-2.elasticbeanstalk.com
+
+
 
 
 

@@ -1,7 +1,6 @@
 package com.xu_store.uniform.service
 
 import com.xu_store.uniform.dto.CreateOrderRequest
-import com.xu_store.uniform.dto.OrderItemRequest
 import com.xu_store.uniform.model.Order
 import com.xu_store.uniform.model.OrderItem
 import com.xu_store.uniform.model.OrderStatus

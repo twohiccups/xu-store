@@ -1,6 +1,6 @@
 package com.xu_store.uniform.security
 
-import com.xu_store.uniform.repository.UserDetailsServiceImpl
+import com.xu_store.uniform.service.UserDetailsServiceImpl
 import jakarta.servlet.FilterChain
 import jakarta.servlet.ServletException
 import jakarta.servlet.http.HttpServletRequest

@@ -5,8 +5,10 @@ import com.xu_store.uniform.dto.CreditTransactionRequest
 import com.xu_store.uniform.dto.CreditTransactionResponse
 import com.xu_store.uniform.service.CreditService
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/credit")

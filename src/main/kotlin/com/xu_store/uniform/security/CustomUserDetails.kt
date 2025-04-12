@@ -1,4 +1,4 @@
-package com.example.demo.security
+package com.xu_store.uniform.security
 
 import com.xu_store.uniform.model.User
 import org.springframework.security.core.GrantedAuthority
