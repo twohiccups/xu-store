@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.*
 class TeamController(
     private val teamService: TeamService,
 ) {
-
-
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping()
+    @GetMapping
     fun getAllTeams(): ResponseEntity<TeamsResponse> {
-        val teams = teamService.getAll()
+        val teams = teamService.getAllTeams()
         return ResponseEntity.ok(TeamsResponse.from(teams))
     }
 
@@ -40,7 +38,6 @@ class TeamController(
         return ResponseEntity.status(HttpStatus.CREATED).body(TeamResponse.from(team))
     }
 
-    // 3) Edit Team
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{teamId}")
     fun updateTeam(

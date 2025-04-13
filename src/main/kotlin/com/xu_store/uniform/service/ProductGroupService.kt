@@ -24,6 +24,10 @@ class ProductGroupService(
 ) {
 
     fun createProductGroup(request: CreateProductGroupRequest): ProductGroup {
+        val existingGroup = productGroupRepository.findByName(request.name)
+        if (existingGroup != null) {
+            throw IllegalArgumentException("Group with name ${request.name} already exists")
+        }
         val productGroup = ProductGroup(
             name = request.name,
             createdAt = LocalDateTime.now(),
@@ -38,7 +42,7 @@ class ProductGroupService(
 
     fun updateProductGroup(groupId: Long, request: UpdateProductGroupRequest): ProductGroup {
         val existingGroup = productGroupRepository.findById(groupId)
-            .orElseThrow { RuntimeException("ProductGroup not found with id: $groupId") }
+            .orElseThrow { IllegalArgumentException("ProductGroup not found with id: $groupId") }
         val updatedGroup = existingGroup.copy(
             name = request.name,
             updatedAt = LocalDateTime.now()

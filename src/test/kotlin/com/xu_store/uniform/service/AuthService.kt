@@ -1,25 +1,19 @@
 package com.xu_store.uniform.service
 
 import com.xu_store.uniform.model.User
-import com.xu_store.uniform.repository.ProductGroupRepository
 import com.xu_store.uniform.repository.UserRepository
 import com.xu_store.uniform.security.JwtService
-import org.springframework.security.core.Authentication
-import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.whenever
-import org.springframework.boot.autoconfigure.security.SecurityProperties
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
 
 
 class AuthServiceTests () {

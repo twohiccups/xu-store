@@ -15,7 +15,6 @@ class ProductGroupController(
     private val productGroupService: ProductGroupService
 ) {
 
-
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     fun createProductGroup(@RequestBody request: CreateProductGroupRequest): ResponseEntity<ProductGroupResponse> {

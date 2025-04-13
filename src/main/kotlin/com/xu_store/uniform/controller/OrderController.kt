@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.*
 
@@ -27,9 +26,7 @@ class OrderController(
         @AuthenticationPrincipal currentUser: CustomUserDetails,
         @RequestBody request: CreateOrderRequest,
     ): ResponseEntity<CreateOrderResponse> {
-
         val user = userService.getUserByEmail(currentUser.username)
-        requireNotNull(user) { "User is not found"}
         try {
             val order = orderService.placeOrder(request, user)
             val createOrderResponse = CreateOrderResponse(
@@ -45,7 +42,7 @@ class OrderController(
                 errorMessage = e.message,
                 orderResponse = null
             )
-            return ResponseEntity.status(HttpStatus.CREATED).body(createOrderResponse)
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(createOrderResponse)
         }
     }
 

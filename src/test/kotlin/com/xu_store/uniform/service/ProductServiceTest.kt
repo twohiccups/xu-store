@@ -96,7 +96,7 @@ class ProductServiceTest {
         )
         whenever(productRepository.findAllByTeamId(teamId)).thenReturn(listOf(product1, product2))
 
-        val products = productService.getProductsForUser(email)
+        val products = productService.getProductsForUserByEmail(email)
 
         assertNotNull(products)
         assertEquals(2, products.size)

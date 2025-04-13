@@ -5,5 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ProductGroupRepository : JpaRepository<ProductGroup, Long>
+interface ProductGroupRepository : JpaRepository<ProductGroup, Long> {
+    fun findByName(name: String) : ProductGroup?
+
+}
 

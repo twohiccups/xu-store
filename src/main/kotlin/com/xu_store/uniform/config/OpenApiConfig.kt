@@ -13,6 +13,6 @@ import org.springframework.context.annotation.Configuration
     bearerFormat = "JWT"
 )
 
-public class OpenApiConfig {
+class OpenApiConfig {
     // No additional methods needed; this annotation is sufficient
 }

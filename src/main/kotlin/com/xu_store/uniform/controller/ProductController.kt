@@ -2,14 +2,12 @@ package com.xu_store.uniform.controller
 
 
 import com.xu_store.uniform.dto.*
-import com.xu_store.uniform.repository.UserRepository
 import com.xu_store.uniform.security.CustomUserDetails
 import com.xu_store.uniform.service.ProductService
 import com.xu_store.uniform.service.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.*
 

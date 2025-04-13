@@ -19,7 +19,7 @@ class CorsConfig(private val corsProperties: CorsProps) {
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true
         configuration.allowPrivateNetwork = true
-        val source: UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()
+        val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source
     }

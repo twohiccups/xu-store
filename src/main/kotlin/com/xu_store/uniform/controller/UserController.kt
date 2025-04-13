@@ -3,13 +3,10 @@ package com.xu_store.uniform.controller
 import com.xu_store.uniform.dto.ShoppingInfoResponse
 import com.xu_store.uniform.dto.UserResponse
 import com.xu_store.uniform.security.CustomUserDetails
-import com.xu_store.uniform.service.TeamService
 import com.xu_store.uniform.service.UserService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -18,9 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/users")
 class UserController(
     private val userService: UserService,
-    private val teamService: TeamService
 ) {
-
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/no-teams")
@@ -34,14 +29,11 @@ class UserController(
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/shopping-info")
     fun getCurrentShoppingInfo(@AuthenticationPrincipal currentUser: CustomUserDetails): ResponseEntity<ShoppingInfoResponse> {
-        val user = userService.getUserByEmail(currentUser.username) ?: throw UsernameNotFoundException("User doesn't exist")
-
-
+        val user = requireNotNull(userService.getUserByEmail(currentUser.username)) { "User was not found"}
+        val shoppingInfoResponse = userService.getCurrentShoppingInfo(user)
         return ResponseEntity.ok(
-            ShoppingInfoResponse(
-                storeCredits = requireNotNull(user.storeCredits),
-                shippingFee = requireNotNull(user.team?.shippingFee)
-        ))
+            shoppingInfoResponse
+        )
     }
 }
 

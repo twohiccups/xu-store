@@ -1,13 +1,11 @@
 package com.xu_store.uniform.service
 
-import com.xu_store.uniform.dto.JwtResponse
 import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.UserRepository
 import com.xu_store.uniform.security.JwtService
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.UsernameNotFoundException
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 

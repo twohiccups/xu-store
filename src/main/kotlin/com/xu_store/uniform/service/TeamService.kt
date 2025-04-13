@@ -69,7 +69,7 @@ class TeamService(
         return teamRepository.findById(teamId)
     }
 
-    fun getAll(): List<Team> {
+    fun getAllTeams(): List<Team> {
         return teamRepository.findAllByOrderByCreatedAtDesc()
     }
 }
