@@ -7,7 +7,6 @@ import com.xu_store.uniform.dto.RegisterUsersWithCreditsRequest
 import com.xu_store.uniform.model.Team
 import com.xu_store.uniform.model.User
 import org.mockito.kotlin.*
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import java.time.LocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +25,8 @@ class BulkRegisterServiceTest {
         creditService = creditService
     )
 
-    private val team = Team(id = 1, name = "Team X", createdAt = LocalDateTime.now(), updatedAt = LocalDateTime.now())
+    private val teamId: Long = 1
+    private val team = Team(id = teamId, name = "Team X", createdAt = LocalDateTime.now(), updatedAt = LocalDateTime.now())
 
     private val existingUser = User(
         id = 10,
@@ -53,7 +53,6 @@ class BulkRegisterServiceTest {
     @Test
     fun `given existing user, when processed then balance is reset and team is set`() {
         val request = RegisterUsersWithCreditsRequest(
-            teamId = 1,
             registerUsersRequest = listOf(
                 RegisterUserWithCreditsRequest(
                     authRequest = AuthRequest("existing@example.com", "irrelevant"),
@@ -67,7 +66,7 @@ class BulkRegisterServiceTest {
         whenever(userService.getUserByEmail("existing@example.com")).thenReturn(existingUser)
         whenever(userService.saveUser(any())).thenReturn(existingUser.copy(team = team))
 
-        bulkRegisterService.processRegistrationList(request)
+        bulkRegisterService.processRegistrationList(teamId, request)
 
         // Reset credits to 0
         verify(creditService).adjustCredits(
@@ -96,7 +95,6 @@ class BulkRegisterServiceTest {
     @Test
     fun `given new user, when processed then they are registered and credited`() {
         val request = RegisterUsersWithCreditsRequest(
-            teamId = 1,
             registerUsersRequest = listOf(
                 RegisterUserWithCreditsRequest(
                     authRequest = AuthRequest("new@example.com", "secret"),
@@ -110,7 +108,7 @@ class BulkRegisterServiceTest {
         whenever(authService.registerUser("new@example.com", "secret")).thenReturn(newUser)
         whenever(userService.saveUser(any())).thenReturn(newUser.copy(team = team))
 
-        bulkRegisterService.processRegistrationList(request)
+        bulkRegisterService.processRegistrationList(teamId, request)
 
         // Verify credit assignment
         verify(creditService).adjustCredits(

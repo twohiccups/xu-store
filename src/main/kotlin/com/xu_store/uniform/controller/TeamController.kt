@@ -77,11 +77,13 @@ class TeamController(
 
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/{teamId}/registerUsers")
+    @PostMapping("/{teamId}/bulkRegisterUsers")
     fun registerUsersWithCredits(
+        @PathVariable teamId: Long,
         registerUsersWithCreditsRequest: RegisterUsersWithCreditsRequest
-    ) {
-        bulkRegisterService.processRegistrationList(registerUsersWithCreditsRequest)
+    ): ResponseEntity<Void> {
+        bulkRegisterService.processRegistrationList(teamId, registerUsersWithCreditsRequest)
+        return ResponseEntity.ok().build()
     }
 
 

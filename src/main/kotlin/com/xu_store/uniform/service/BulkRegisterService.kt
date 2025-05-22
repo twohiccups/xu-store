@@ -14,8 +14,8 @@ class BulkRegisterService(
 
 ) {
 
-    fun processRegistrationList(registerRequest: RegisterUsersWithCreditsRequest) {
-        val team = teamService.getTeamById(registerRequest.teamId)
+    fun processRegistrationList(teamId: Long, registerRequest: RegisterUsersWithCreditsRequest) {
+        val team = teamService.getTeamById(teamId)
         registerRequest.registerUsersRequest.forEach { request ->
 
             val user: User = when {
