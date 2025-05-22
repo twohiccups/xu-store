@@ -1,7 +1,7 @@
 package com.xu_store.uniform.service
 
 import com.xu_store.uniform.dto.CreditTransactionRequest
-import com.xu_store.uniform.dto.RegisterUsersWithCreditsRequest
+import com.xu_store.uniform.dto.BulkRegisterRequest
 import com.xu_store.uniform.model.User
 import org.springframework.stereotype.Service
 
@@ -14,7 +14,7 @@ class BulkRegisterService(
 
 ) {
 
-    fun processRegistrationList(teamId: Long, registerRequest: RegisterUsersWithCreditsRequest) {
+    fun processRegistrationList(teamId: Long, registerRequest: BulkRegisterRequest) {
         val team = teamService.getTeamById(teamId)
         registerRequest.registerUsersRequest.forEach { request ->
 

@@ -2,7 +2,7 @@ package com.xu_store.uniform.dto
 
 import com.xu_store.uniform.service.TeamService
 
-data class RegisterUsersWithCreditsRequest(
+data class BulkRegisterRequest(
     val registerUsersRequest: List<RegisterUserWithCreditsRequest>,
 )
 

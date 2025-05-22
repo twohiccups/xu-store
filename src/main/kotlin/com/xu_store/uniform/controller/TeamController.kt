@@ -15,6 +15,7 @@ class TeamController(
     private val teamService: TeamService,
     private val bulkRegisterService: BulkRegisterService
     ) {
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     fun getAllTeams(): ResponseEntity<TeamsResponse> {
@@ -77,14 +78,13 @@ class TeamController(
 
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/{teamId}/bulkRegisterUsers")
-    fun registerUsersWithCredits(
+    @PostMapping("/{teamId}/bulkRegister")
+    fun bulkRegister(
         @PathVariable teamId: Long,
-        registerUsersWithCreditsRequest: RegisterUsersWithCreditsRequest
+        @RequestBody bulkRegisterRequest: BulkRegisterRequest
     ): ResponseEntity<Void> {
-        bulkRegisterService.processRegistrationList(teamId, registerUsersWithCreditsRequest)
+        bulkRegisterService.processRegistrationList(teamId, bulkRegisterRequest)
         return ResponseEntity.ok().build()
     }
-
 
 }

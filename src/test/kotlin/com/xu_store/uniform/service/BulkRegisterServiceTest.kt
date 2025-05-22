@@ -3,7 +3,7 @@ package com.xu_store.uniform.service
 import com.xu_store.uniform.dto.AuthRequest
 import com.xu_store.uniform.dto.CreditTransactionRequest
 import com.xu_store.uniform.dto.RegisterUserWithCreditsRequest
-import com.xu_store.uniform.dto.RegisterUsersWithCreditsRequest
+import com.xu_store.uniform.dto.BulkRegisterRequest
 import com.xu_store.uniform.model.Team
 import com.xu_store.uniform.model.User
 import org.mockito.kotlin.*
@@ -52,7 +52,7 @@ class BulkRegisterServiceTest {
 
     @Test
     fun `given existing user, when processed then balance is reset and team is set`() {
-        val request = RegisterUsersWithCreditsRequest(
+        val request = BulkRegisterRequest(
             registerUsersRequest = listOf(
                 RegisterUserWithCreditsRequest(
                     authRequest = AuthRequest("existing@example.com", "irrelevant"),
@@ -94,7 +94,7 @@ class BulkRegisterServiceTest {
 
     @Test
     fun `given new user, when processed then they are registered and credited`() {
-        val request = RegisterUsersWithCreditsRequest(
+        val request = BulkRegisterRequest(
             registerUsersRequest = listOf(
                 RegisterUserWithCreditsRequest(
                     authRequest = AuthRequest("new@example.com", "secret"),
