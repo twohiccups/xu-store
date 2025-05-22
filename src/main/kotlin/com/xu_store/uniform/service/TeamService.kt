@@ -6,6 +6,7 @@ import com.xu_store.uniform.model.Team
 import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.TeamRepository
 import com.xu_store.uniform.repository.UserRepository
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -14,7 +15,7 @@ import java.util.*
 @Service
 class TeamService(
     private val teamRepository: TeamRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) {
 
     fun createTeam(request: CreateTeamRequest): Team {
@@ -65,8 +66,9 @@ class TeamService(
         return userRepository.save(updatedUser)
     }
 
-    fun getTeamById(teamId: Long): Optional<Team> {
+    fun getTeamById(teamId: Long): Team {
         return teamRepository.findById(teamId)
+            .orElseThrow { UsernameNotFoundException("Team with ID $teamId was not found") }
     }
 
     fun getAllTeams(): List<Team> {

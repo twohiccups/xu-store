@@ -26,7 +26,7 @@ class CreditController (
     @PreAuthorize("hasRole('ADMIN')")
     fun createCreditTransaction(@RequestBody creditTransactionRequest: CreditTransactionRequest) : CreateCreditTransactionResponse {
         try {
-            val creditTransaction = creditService.processCreditTransactionRequest(creditTransactionRequest)
+            val creditTransaction = creditService.adjustCredits(creditTransactionRequest)
             return CreateCreditTransactionResponse(
                 success = true,
                 creditTransaction = CreditTransactionResponse.from(creditTransaction)

@@ -94,11 +94,9 @@ class ProductService (
 
     @Transactional
     fun updateProduct(productId: Long, request: UpdateProductRequest): Product {
-        // Fetch the product (with variations eagerly loaded)
         val product = productRepository.findByIdWithVariations(productId)
             .orElseThrow { RuntimeException("Product not found") }
 
-        // Create a lookup for update requests that refer to an existing variation
         val requestVariationsById = request.productVariations
             .filter { it.id != null }
             .associateBy { it.id!! }

@@ -21,15 +21,10 @@ class CreditService (
 
 
     @Transactional
-    fun processCreditTransactionRequest(creditTransactionRequest: CreditTransactionRequest): CreditTransaction {
-        val optionalUser = userService.getUserById(creditTransactionRequest.userId)
-        if (optionalUser.isEmpty) {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")
-        }
+    fun adjustCredits(creditTransactionRequest: CreditTransactionRequest): CreditTransaction {
 
-        val user = optionalUser.get()
+        val user = userService.getUserById(creditTransactionRequest.userId)
         val newBalance = user.storeCredits + creditTransactionRequest.amount
-
 
         require(newBalance >= 0) {"New Balance must be non negative"}
 

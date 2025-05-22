@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
-    private val userRepository: UserRepository,
+    private val userService: UserService,
     private val passwordEncoder: PasswordEncoder,
     private val jwtService: JwtService,
     private val authenticationManager: AuthenticationManager,
@@ -21,7 +21,7 @@ class AuthService(
         when {
             username.isEmpty() -> throw IllegalArgumentException("Username cannot be empty")
             password.isEmpty() -> throw IllegalArgumentException("Password cannot be empty")
-            userRepository.findByEmail(username) != null -> throw IllegalArgumentException("Username already exists")
+            userService.doesUserExist(username) -> throw IllegalArgumentException("Username already exists")
         }
 
         val hashedPassword = passwordEncoder.encode(password)
@@ -29,7 +29,7 @@ class AuthService(
             email = username,
             passwordHash = hashedPassword,
         )
-        return userRepository.save(newUser)
+        return userService.saveUser((newUser))
     }
 
     /* Return JWT */

@@ -84,9 +84,6 @@ class OrderService(
         return orderRepository.findAllByTeamId(teamId)
     }
 
-
-
-
     fun getOrdersByUserId(userId: Long): List<Order> {
         return orderRepository.findAllByUserId(userId)
     }

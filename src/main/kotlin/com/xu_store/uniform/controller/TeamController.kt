@@ -1,6 +1,8 @@
 package com.xu_store.uniform.controller
 
 import com.xu_store.uniform.dto.*
+import com.xu_store.uniform.service.AuthService
+import com.xu_store.uniform.service.BulkRegisterService
 import com.xu_store.uniform.service.TeamService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -11,7 +13,8 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/teams")
 class TeamController(
     private val teamService: TeamService,
-) {
+    private val bulkRegisterService: BulkRegisterService
+    ) {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     fun getAllTeams(): ResponseEntity<TeamsResponse> {
@@ -22,11 +25,8 @@ class TeamController(
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{teamId}")
     fun getTeamById(@PathVariable teamId: Long): ResponseEntity<TeamDetailResponse> {
-        val teamOpt = teamService.getTeamById(teamId)
-        if (teamOpt.isEmpty) {
-            return ResponseEntity.notFound().build()
-        }
-        val teamDetail = TeamDetailResponse.from(teamOpt.get())
+        val team = teamService.getTeamById(teamId)
+        val teamDetail = TeamDetailResponse.from(team)
         return ResponseEntity.ok(teamDetail)
     }
 
@@ -74,4 +74,15 @@ class TeamController(
         val updatedUser = teamService.removeUserFromTeam(teamId, userId)
         return ResponseEntity.ok(UserResponse.from(updatedUser))
     }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/{teamId}/registerUsers")
+    fun registerUsersWithCredits(
+        registerUsersWithCreditsRequest: RegisterUsersWithCreditsRequest
+    ) {
+        bulkRegisterService.processRegistrationList(registerUsersWithCreditsRequest)
+    }
+
+
 }

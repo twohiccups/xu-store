@@ -3,6 +3,7 @@ package com.xu_store.uniform.service
 import com.xu_store.uniform.dto.ShoppingInfoResponse
 import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.UserRepository
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import java.util.*
@@ -12,8 +13,8 @@ class UserService (
     private val userRepository: UserRepository,
     ){
 
-    fun getUserById(userId: Long) : Optional<User> {
-        return userRepository.findById(userId)
+    fun getUserById(userId: Long) : User {
+        return userRepository.findById(userId).orElseThrow { EntityNotFoundException("User was not found")}
     }
 
     fun getUsersWithoutTeams() : List<User> {
@@ -23,6 +24,11 @@ class UserService (
     fun getUserByEmail(email: String) : User {
         val user = userRepository.findByEmail(email)
         return user ?: throw UsernameNotFoundException("User $email was not found")
+    }
+
+    fun doesUserExist(email: String): Boolean {
+        val user = userRepository.findByEmail(email)
+        return user != null
     }
 
     fun saveUser(user: User): User {
