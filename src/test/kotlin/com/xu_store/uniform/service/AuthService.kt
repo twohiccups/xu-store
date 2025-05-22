@@ -45,7 +45,7 @@ class AuthServiceTests {
     )
 
     @Test
-    fun `given user registration, when username and password ok then registration succeeds`() {
+    fun  `given user registration, when username and password ok then registration succeeds`() {
         whenever(passwordEncoder.encode(testPassword)).thenReturn(testPasswordHash)
         whenever(userService.doesUserExist(testUsername)).thenReturn(false)
         whenever(userService.saveUser(any())).thenAnswer { invocation ->
