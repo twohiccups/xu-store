@@ -6,10 +6,14 @@ COPY pom.xml .
 RUN mvn dependency:go-offline -B
 
 COPY src ./src
-RUN mvn package -DskipTests -B -Dspring.profiles.active=prod -P!swagger
+
+# Disable swagger dependency on prod
+RUN rm -f src/main/kotlin/com/xu_store/uniform/config/OpenApiConfig.kt || true
+
+RUN mvn package -DskipTests -B
 
 # Stage 2: Minimal secure runtime image
-FROM gcr.io/distroless/java17-debian11
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 COPY --from=build /app/target/uniform-0.0.1-SNAPSHOT.jar /app/app.jar
