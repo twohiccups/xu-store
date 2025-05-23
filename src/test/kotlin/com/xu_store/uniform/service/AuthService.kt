@@ -4,8 +4,8 @@ import com.xu_store.uniform.model.User
 import com.xu_store.uniform.security.JwtService
 import org.mockito.kotlin.*
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.time.LocalDateTime
@@ -16,7 +16,7 @@ import kotlin.test.assertFailsWith
 class AuthServiceTests {
 
     private val mockAuthentication = mock<Authentication>()
-    private val userService = mock<UserService>()  // ✅ Kotlin-style mock
+    private val userService = mock<UserService>()
     private val passwordEncoder = mock<PasswordEncoder>()
     private val jwtService = mock<JwtService>()
     private val authenticationManager = mock<AuthenticationManager>()
@@ -37,7 +37,7 @@ class AuthServiceTests {
         id = 15,
         email = testUsername,
         passwordHash = testPasswordHash,
-        role = "",
+        role = "ADMIN",
         storeCredits = 0,
         team = null,
         createdAt = LocalDateTime.now(),
@@ -45,7 +45,7 @@ class AuthServiceTests {
     )
 
     @Test
-    fun  `given user registration, when username and password ok then registration succeeds`() {
+    fun `given user registration, when username and password ok then registration succeeds`() {
         whenever(passwordEncoder.encode(testPassword)).thenReturn(testPasswordHash)
         whenever(userService.doesUserExist(testUsername)).thenReturn(false)
         whenever(userService.saveUser(any())).thenAnswer { invocation ->
@@ -85,17 +85,22 @@ class AuthServiceTests {
         }
     }
 
-//    @Test
-//    fun `given user login, when good credentials then token is returned`() {
-//        whenever(authenticationManager.authenticate(any())).thenReturn(mockAuthentication)
-//        whenever(mockAuthentication.isAuthenticated).thenReturn(true)
-//        whenever(jwtService.generateToken(testUsername)).thenReturn(testJwt)
-//
-//        val token = authService.loginUser(testUsername, testPassword)
-//
-//        assertEquals(testJwt, token)
-//        verify(jwtService).generateToken(testUsername)
-//    }
+    @Test
+    fun `given user login, when good credentials then token is returned`() {
+        val mockUserDetails = mock<UserDetails> {
+            on { username } doReturn testUsername
+        }
+
+        whenever(authenticationManager.authenticate(any())).thenReturn(mockAuthentication)
+        whenever(mockAuthentication.isAuthenticated).thenReturn(true)
+        whenever(mockAuthentication.principal).thenReturn(mockUserDetails)
+        whenever(jwtService.generateToken(mockUserDetails)).thenReturn(testJwt)
+
+        val token = authService.loginUser(testUsername, testPassword)
+
+        assertEquals(testJwt, token)
+        verify(jwtService).generateToken(mockUserDetails)
+    }
 
     @Test
     fun `given user login, when bad credentials then exception is thrown`() {
