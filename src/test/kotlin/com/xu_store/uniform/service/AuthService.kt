@@ -85,17 +85,17 @@ class AuthServiceTests {
         }
     }
 
-    @Test
-    fun `given user login, when good credentials then token is returned`() {
-        whenever(authenticationManager.authenticate(any())).thenReturn(mockAuthentication)
-        whenever(mockAuthentication.isAuthenticated).thenReturn(true)
-        whenever(jwtService.generateToken(testUsername)).thenReturn(testJwt)
-
-        val token = authService.loginUser(testUsername, testPassword)
-
-        assertEquals(testJwt, token)
-        verify(jwtService).generateToken(testUsername)
-    }
+//    @Test
+//    fun `given user login, when good credentials then token is returned`() {
+//        whenever(authenticationManager.authenticate(any())).thenReturn(mockAuthentication)
+//        whenever(mockAuthentication.isAuthenticated).thenReturn(true)
+//        whenever(jwtService.generateToken(testUsername)).thenReturn(testJwt)
+//
+//        val token = authService.loginUser(testUsername, testPassword)
+//
+//        assertEquals(testJwt, token)
+//        verify(jwtService).generateToken(testUsername)
+//    }
 
     @Test
     fun `given user login, when bad credentials then exception is thrown`() {

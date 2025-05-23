@@ -48,10 +48,22 @@ class JwtService (
         return username == userDetails.username && !isTokenExpired(token)
     }
 
-    fun generateToken(username: String): String {
-        val claims: Map<String, Any> = HashMap()
-        return createToken(claims, username)
+    fun generateToken(userDetails: UserDetails): String {
+        val claims = mutableMapOf<String, Any>()
+
+        val roles = userDetails.authorities.map { it.authority }
+
+        claims["authorities"] = roles
+
+        // If the principal is our custom type, also include the single 'role' for convenience
+        if (userDetails is CustomUserDetails) {
+            claims["role"] = userDetails.getRole()
+        }
+
+        return createToken(claims, userDetails.username)
     }
+
+
 
     private fun createToken(claims: Map<String, Any>, username: String): String {
         return Jwts.builder()

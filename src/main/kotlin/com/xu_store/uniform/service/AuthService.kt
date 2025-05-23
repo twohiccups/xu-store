@@ -5,6 +5,7 @@ import com.xu_store.uniform.repository.UserRepository
 import com.xu_store.uniform.security.JwtService
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -33,15 +34,18 @@ class AuthService(
     }
 
     /* Return JWT */
-    fun loginUser(username: String, password:String): String {
+    fun loginUser(username: String, password: String): String {
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(username, password)
         )
+
         if (authentication.isAuthenticated) {
-            return jwtService.generateToken(username)
+            val userDetails = authentication.principal as UserDetails
+            return jwtService.generateToken(userDetails)
         } else {
             throw UsernameNotFoundException("Invalid user request")
         }
     }
+
 
 }

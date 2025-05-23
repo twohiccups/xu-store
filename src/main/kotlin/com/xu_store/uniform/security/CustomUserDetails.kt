@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails
 
 class CustomUserDetails(private val user: User) : UserDetails {
 
+    fun getRole(): String = user.role.toString()  // or user.role.toString() if it's not an enum
+
     override fun getAuthorities(): Collection<GrantedAuthority> {
         return listOf(SimpleGrantedAuthority("ROLE_${user.role}"))
     }
