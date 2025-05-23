@@ -77,6 +77,7 @@ class ProductService (
             val variation = ProductVariation(
                 product = product,  // associate with the product
                 variationName = variationRequest.variationName,
+                displayOrder = variationRequest.displayOrder,
                 price = variationRequest.price
             )
             product.productVariations.add(variation)
@@ -109,6 +110,7 @@ class ProductService (
                 // Use copy() on the variation (data classes automatically provide copy)
                 existing.copy(
                     variationName = updateRequest.variationName,
+                    displayOrder = updateRequest.displayOrder,
                     price = updateRequest.price
                 )
             }
@@ -120,6 +122,7 @@ class ProductService (
                 ProductVariation(
                     product = product, // Temporary: will be set properly on the new Product copy.
                     variationName = newVarRequest.variationName,
+                    displayOrder = newVarRequest.displayOrder,
                     price = newVarRequest.price
                 )
             }

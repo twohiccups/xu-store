@@ -74,6 +74,7 @@ class OrderServiceTests {
             price = 100,
             product = product,
             variationName = "Variation",
+            displayOrder = 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )
@@ -147,6 +148,7 @@ class OrderServiceTests {
             price = 100,
             product = product,
             variationName = "Variation",
+            displayOrder = 0,
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
         )

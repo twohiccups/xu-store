@@ -36,6 +36,7 @@ data class ProductResponse(
 data class ProductVariationResponse(
     val id: Long,
     val variationName: String,
+    val displayOrder: Int,
     val price: Long,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
@@ -45,6 +46,7 @@ data class ProductVariationResponse(
             return ProductVariationResponse(
                 id = requireNotNull(productVariation.id) {"Product Variation Id must not be null"},
                 variationName = productVariation.variationName,
+                displayOrder = productVariation.displayOrder,
                 price = productVariation.price,
                 createdAt = productVariation.createdAt,
                 updatedAt = productVariation.updatedAt

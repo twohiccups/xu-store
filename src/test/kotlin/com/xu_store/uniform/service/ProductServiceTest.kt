@@ -110,10 +110,12 @@ class ProductServiceTest {
         // (Assuming your CreateProductRequest has a nested VariationRequest class.)
         val variationRequest1 = CreateProductVariationRequest(
             variationName = "Variation A",
+            displayOrder = 0,
             price = 1000
         )
         val variationRequest2 = CreateProductVariationRequest(
             variationName = "Variation B",
+            displayOrder = 0,
             price = 1500
         )
         val createRequest = CreateProductRequest(
@@ -130,8 +132,8 @@ class ProductServiceTest {
             description = createRequest.description,
             productVariations = mutableListOf(
                 // Here we simulate that variations are saved as well.
-                ProductVariation(id = 10L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, productVariations = mutableListOf()), variationName = "Variation A", price = 1000),
-                ProductVariation(id = 11L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, productVariations = mutableListOf()), variationName = "Variation B", price = 1500)
+                ProductVariation(id = 10L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, productVariations = mutableListOf()), variationName = "Variation A", displayOrder = 0, price = 1000),
+                ProductVariation(id = 11L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, productVariations = mutableListOf()), variationName = "Variation B", displayOrder = 0, price = 1500)
             ),
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now()
@@ -166,6 +168,7 @@ class ProductServiceTest {
             id = 100L,
             product = existingProduct,
             variationName = "Old Variation",
+            displayOrder = 0,
             price = 1000
         )
         existingProduct.productVariations.add(existingVariation)
@@ -181,12 +184,14 @@ class ProductServiceTest {
                 UpdateProductVariationRequest(
                     id = 100L,
                     variationName = "Updated Variation",
+                    displayOrder = 0,
                     price = 1200
                 ),
                 // Add a new variation.
                 UpdateProductVariationRequest(
                     id = null,
                     variationName = "New Variation",
+                    displayOrder = 0,
                     price = 1500
                 )
             )

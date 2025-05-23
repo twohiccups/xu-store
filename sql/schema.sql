@@ -35,6 +35,7 @@ CREATE TABLE product_variations (
     id BIGSERIAL PRIMARY KEY,
     product_id BIGINT NOT NULL,
     variation_name VARCHAR(255) NOT NULL,
+    display_order INT DEFAULT 0,
     price BIGINT NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
@@ -42,7 +43,6 @@ CREATE TABLE product_variations (
         FOREIGN KEY (product_id) REFERENCES products (id),
     CONSTRAINT unique_product_variation UNIQUE (product_id, variation_name)
 );
-
 
 
 CREATE TABLE product_images (

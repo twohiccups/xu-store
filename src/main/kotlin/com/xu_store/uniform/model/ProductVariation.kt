@@ -17,6 +17,9 @@ data class ProductVariation(
     @Column(name = "variation_name")
     val variationName: String,
 
+    @Column(name = "display_order")
+    val displayOrder: Int = 0,
+
     val price: Long,
 
     @Column(name = "created_at")

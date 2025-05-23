@@ -23,6 +23,7 @@ data class Product(
     var archived: Boolean = false,
 
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+    @OrderBy("displayOrder ASC")
     val productVariations: MutableList<ProductVariation> = mutableListOf(),
 
     @OneToMany(mappedBy = "product", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
