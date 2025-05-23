@@ -16,7 +16,7 @@ class JwtCookieHelper(private val jwtConfig: JwtConfig) {
             .httpOnly(true)
             .secure(true)
             .path(cookiePath)
-            .sameSite("Lax")
+            .sameSite("None")
             .maxAge(jwtConfig.expirationPeriod / 1000) // Convert ms to seconds
             .build()
     }
