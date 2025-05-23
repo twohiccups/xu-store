@@ -24,18 +24,18 @@ class JwtAuthFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val authHeader = request.getHeader("Authorization")
-        var token: String? = null
+        // Try to extract JWT from cookie
+        val cookies = request.cookies
+        val token = cookies?.firstOrNull { it.name == "accessToken" }?.value
+
         var username: String? = null
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            token = authHeader.substring(7)
+        if (token != null) {
             try {
                 username = jwtService.extractUsername(token)
             } catch (e: io.jsonwebtoken.ExpiredJwtException) {
-            // Token expired; send error response and exit filter chain
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token expired")
-            return
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT token expired")
+                return
             }
         }
 
@@ -52,4 +52,5 @@ class JwtAuthFilter(
 
         filterChain.doFilter(request, response)
     }
+
 }
