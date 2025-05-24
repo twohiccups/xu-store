@@ -6,6 +6,7 @@ server:
 jwt:
   secret: ${JWT_SECRET}
   expiration-period: 86400000 # in milliseconds (24 hours)
+  cookie-domain: ${COOKIE_DOMAIN}
 spring:
   application:
     name: store

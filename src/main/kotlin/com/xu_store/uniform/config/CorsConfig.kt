@@ -15,10 +15,11 @@ class CorsConfig(private val corsProperties: CorsProps) {
         println(corsProperties.allowedOrigins)
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = corsProperties.allowedOrigins
-        configuration.allowedMethods = listOf("*")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true
         configuration.allowPrivateNetwork = true
+        configuration.exposedHeaders = listOf("Set-Cookie")
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source
