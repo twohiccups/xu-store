@@ -1,7 +1,6 @@
 package com.xu_store.uniform.util
 
 import com.xu_store.uniform.config.JwtConfig
-import org.apache.tomcat.util.http.SameSiteCookies
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Component
 
@@ -11,15 +10,15 @@ class JwtCookieHelper(private val jwtConfig: JwtConfig) {
     private val accessTokenCookieName = "accessToken"
     private val cookiePath = "/"
 
-
+    /** Creates the HttpOnly, Secure cookie for access token */
     fun createAccessTokenCookie(token: String): ResponseCookie {
         return ResponseCookie.from(accessTokenCookieName, token)
             .domain(jwtConfig.cookieDomain)
-            .path(cookiePath)
             .httpOnly(true)
             .secure(true)
-            .sameSite(SameSiteCookies.LAX.toString())
-            .maxAge(jwtConfig.expirationPeriod / 1000)  // Convert ms to seconds
+            .path(cookiePath)
+            .sameSite("Lax")
+            .maxAge(jwtConfig.expirationPeriod / 1000) // Convert ms to seconds
             .build()
     }
 
