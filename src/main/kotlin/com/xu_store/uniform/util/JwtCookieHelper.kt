@@ -1,6 +1,7 @@
 package com.xu_store.uniform.util
 
 import com.xu_store.uniform.config.JwtConfig
+import org.apache.tomcat.util.http.SameSiteCookies
 import org.springframework.http.ResponseCookie
 import org.springframework.stereotype.Component
 
@@ -17,7 +18,7 @@ class JwtCookieHelper(private val jwtConfig: JwtConfig) {
             .httpOnly(true)
             .secure(true)
             .path(cookiePath)
-            .sameSite("Lax")
+            .sameSite(SameSiteCookies.LAX.toString())
             .maxAge(jwtConfig.expirationPeriod / 1000) // Convert ms to seconds
             .build()
     }
