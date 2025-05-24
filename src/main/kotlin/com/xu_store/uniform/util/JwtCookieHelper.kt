@@ -25,12 +25,12 @@ class JwtCookieHelper(private val jwtConfig: JwtConfig) {
 
     fun deleteAccessTokenCookie(): ResponseCookie {
         return ResponseCookie.from(accessTokenCookieName, "")
-            .domain(jwtConfig.cookieDomain)      // same domain as createAccessTokenCookie
-            .path(cookiePath)                   // same path
+            .domain(jwtConfig.cookieDomain)
             .httpOnly(true)
             .secure(true)
+            .path(cookiePath)
             .sameSite(SameSiteCookies.LAX.toString())
-            .maxAge(0)                          // expire immediately
+            .maxAge(0)
             .build()
     }
 }
