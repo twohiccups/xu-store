@@ -34,10 +34,11 @@ class AuthController(
     }
 
     @PostMapping("/logout")
-    fun logout(response: HttpServletResponse): ResponseEntity<Void> {
+    fun logout(response: HttpServletResponse): ResponseEntity<Map<String, String>> {
         val expiredCookie = jwtCookieHelper.deleteAccessTokenCookie()
         response.setHeader(HttpHeaders.SET_COOKIE, expiredCookie.toString())
-        return ResponseEntity.noContent().build()
+        val body = mapOf("message" to "Logout successful")
+        return ResponseEntity.ok(body)
     }
 
 }
