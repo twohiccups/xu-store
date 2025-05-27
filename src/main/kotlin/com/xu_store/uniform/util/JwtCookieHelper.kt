@@ -18,7 +18,7 @@ class JwtCookieHelper(private val jwtConfig: JwtConfig) {
             .httpOnly(true)
             .secure(true)
             .path(cookiePath)
-            .sameSite(SameSiteCookies.LAX.toString())
+            .sameSite(SameSiteCookies.NONE.toString())
             .maxAge(jwtConfig.expirationPeriod / 1000) // Convert ms to seconds
             .build()
     }
@@ -29,7 +29,7 @@ class JwtCookieHelper(private val jwtConfig: JwtConfig) {
             .httpOnly(true)
             .secure(true)
             .path(cookiePath)
-            .sameSite(SameSiteCookies.LAX.toString())
+            .sameSite(SameSiteCookies.NONE.toString())
             .maxAge(0)
             .build()
     }
