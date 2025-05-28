@@ -9,6 +9,7 @@ import com.xu_store.uniform.repository.ProductGroupRepository
 import com.xu_store.uniform.repository.TeamProductGroupRepository
 import com.xu_store.uniform.repository.ProductRepository
 import com.xu_store.uniform.repository.TeamRepository
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -58,31 +59,57 @@ class ProductGroupService(
     fun addProductsToGroup(productGroupId: Long, request: AddProductsToProductGroupRequest): ProductGroup {
         val productGroup = productGroupRepository.findById(productGroupId)
             .orElseThrow { RuntimeException("ProductGroup not found with id: $productGroupId") }
+
+        // Determine current max display order (or -1 if none)
+        var nextDisplayOrder = productGroup.productGroupAssignments
+            .maxOfOrNull { it.displayOrder } ?: -1
+
         request.productIds.forEach { productId ->
             val product = productRepository.findById(productId)
                 .orElseThrow { RuntimeException("Product not found with id: $productId") }
+
             // Avoid duplicates
             if (productGroup.productGroupAssignments.none { it.product.id == productId }) {
                 val assignment = ProductGroupAssignment(
                     product = product,
-                    productGroup = productGroup
+                    productGroup = productGroup,
+                    displayOrder = ++nextDisplayOrder
                 )
                 productGroup.productGroupAssignments.add(assignment)
             }
         }
+
         return productGroupRepository.save(productGroup)
     }
+
+
+    private fun ProductGroupRepository.findByIdOrThrow(id: Long): ProductGroup =
+        findById(id).orElseThrow { EntityNotFoundException("ProductGroup $id not found") }
+
 
     @Transactional
-    fun removeProductsFromGroup(productGroupId: Long, request: RemoveProductsFromProductGroupRequest): ProductGroup {
+    fun removeProductsFromGroup(groupId: Long, request: RemoveProductsFromProductGroupRequest): ProductGroup {
+        val group = productGroupRepository.findByIdOrThrow(groupId)
 
-        val productGroup = productGroupRepository.findById(productGroupId)
-            .orElseThrow { RuntimeException("ProductGroup not found with id: $productGroupId") }
-        productGroup.productGroupAssignments.removeIf { assignment ->
-            request.productIds.contains(assignment.product.id)
-        }
-        return productGroupRepository.save(productGroup)
+        // Remove the assignments
+        val toRemove = group.productGroupAssignments
+            .filter { assignment -> request.productIds.contains(assignment.product.id) }
+
+        group.productGroupAssignments.removeAll(toRemove)
+
+        // Reassign displayOrder only if changed
+        group.productGroupAssignments
+            .sortedBy { it.displayOrder }
+            .forEachIndexed { index, assignment ->
+                if (assignment.displayOrder != index) {
+                    assignment.displayOrder = index
+                }
+            }
+
+        return group
     }
+
+
 
     @Transactional
     fun addTeamsToGroup(productGroupId: Long, request: AddTeamsToProductGroupRequest): ProductGroup {
@@ -110,4 +137,24 @@ class ProductGroupService(
     fun findAllProductGroups() : List<ProductGroup> {
         return productGroupRepository.findAll()
     }
+
+
+    @Transactional
+    fun reorderProductsInGroup(groupId: Long, request: ReorderProductGroupRequest): ProductGroup {
+        val group = productGroupRepository.findByIdOrThrow(groupId)
+
+        val assignmentMap = group.productGroupAssignments.associateBy { it.product.id }
+
+        request.orderedProductIds.forEachIndexed { index, productId ->
+            val assignment = assignmentMap[productId]
+                ?: throw IllegalArgumentException("Product ID $productId not found in group $groupId")
+
+            if (assignment.displayOrder != index) {
+                assignment.displayOrder = index
+            }
+        }
+
+        return group
+    }
+
 }

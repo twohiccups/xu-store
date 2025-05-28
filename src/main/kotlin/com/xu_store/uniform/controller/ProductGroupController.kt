@@ -90,12 +90,21 @@ class ProductGroupController(
         return ResponseEntity.ok(Unit)
     }
 
-
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
         fun getAllGroups() : ProductGroupsResponse {
             val groups = productGroupService.findAllProductGroups()
             return ProductGroupsResponse.from(groups)
         }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{groupId}/reorder")
+    fun reorderProductsInGroup(
+        @PathVariable groupId: Long,
+        @RequestBody request: ReorderProductGroupRequest
+    ): ResponseEntity<ProductGroupResponse> {
+        val updatedGroup = productGroupService.reorderProductsInGroup(groupId, request)
+        return ResponseEntity.ok(ProductGroupResponse.from(updatedGroup))
+    }
 }
 

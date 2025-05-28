@@ -67,6 +67,7 @@ CREATE TABLE product_group_assignments (
     id BIGSERIAL PRIMARY KEY,
     product_id BIGINT NOT NULL,
     product_group_id BIGINT NOT NULL,
+    display_order INT DEFAULT 0,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     CONSTRAINT fk_pga_product

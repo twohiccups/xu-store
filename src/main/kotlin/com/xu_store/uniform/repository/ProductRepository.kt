@@ -28,15 +28,15 @@ interface ProductRepository: JpaRepository<Product, Long> {
     fun findVariationPrice(@Param("id") id: Long): Optional<Long>
 
 
-
     @Query(
         value = """
-        SELECT DISTINCT p.* 
+        SELECT DISTINCT p.*, pga.display_order
         FROM products p
         JOIN product_group_assignments pga ON pga.product_id = p.id
         JOIN team_product_groups tpg ON tpg.product_group_id = pga.product_group_id
         WHERE tpg.team_id = :team_id AND p.archived = false
-        
+        ORDER BY pga.display_order
+
     """,
         nativeQuery = true
     )

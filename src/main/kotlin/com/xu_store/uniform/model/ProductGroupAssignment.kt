@@ -18,6 +18,9 @@ data class ProductGroupAssignment(
     @JoinColumn(name = "product_group_id", nullable = false)
     val productGroup: ProductGroup,
 
+    @Column(name = "display_order")
+    var displayOrder: Int = 0,
+
     @Column(name = "created_at")
     var createdAt: LocalDateTime = LocalDateTime.now(),
 
