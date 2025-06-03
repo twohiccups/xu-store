@@ -8,7 +8,8 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
-import java.time.LocalDateTime
+import java.time.Instant
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -40,8 +41,8 @@ class AuthServiceTests {
         role = "ADMIN",
         storeCredits = 0,
         team = null,
-        createdAt = LocalDateTime.now(),
-        updatedAt = LocalDateTime.now()
+        createdAt = Instant.now(),
+        updatedAt = Instant.now()
     )
 
     @Test

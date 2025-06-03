@@ -11,12 +11,14 @@ import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.ProductRepository
 import com.xu_store.uniform.repository.UserRepository
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
+import java.time.Instant
+
 
 
 import org.junit.jupiter.api.Assertions.*
 import org.mockito.Mockito.*
 import org.mockito.kotlin.whenever
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 class ProductServiceTest {
@@ -62,8 +64,8 @@ class ProductServiceTest {
         val team = Team(
             id = teamId,
             name = "Team A",
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         val user = User(
             id = 1L,
@@ -72,8 +74,8 @@ class ProductServiceTest {
             role = "USER",
             storeCredits = 0,
             team = team,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         whenever(userRepository.findByEmail(email)).thenReturn(user)
 
@@ -83,16 +85,16 @@ class ProductServiceTest {
             name = "Product 1",
             description = "First product",
             productVariations = mutableListOf(),
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         val product2 = Product(
             id = 2L,
             name = "Product 2",
             description = "Second product",
             productVariations = mutableListOf(),
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         whenever(productRepository.findAllByTeamId(teamId)).thenReturn(listOf(product1, product2))
 
@@ -135,8 +137,8 @@ class ProductServiceTest {
                 ProductVariation(id = 10L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, productVariations = mutableListOf()), variationName = "Variation A", displayOrder = 0, price = 1000),
                 ProductVariation(id = 11L, product = Product(id = 1L, name = createRequest.name, description = createRequest.description, productVariations = mutableListOf()), variationName = "Variation B", displayOrder = 0, price = 1500)
             ),
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         whenever(productRepository.save(any(Product::class.java))).thenReturn(savedProduct)
 
@@ -154,13 +156,14 @@ class ProductServiceTest {
     fun `updateProduct updates existing product and adds new variations`() {
         // Arrange: Create an existing product with one variation.
 
+
         val existingProduct = Product(
             id = 1L,
             name = "Old Product Name",
             description = "Old Description",
             productVariations = mutableListOf(),
-            createdAt = LocalDateTime.now().minusDays(1),
-            updatedAt = LocalDateTime.now().minusDays(1)
+            createdAt = Instant.now().minus(1, ChronoUnit.DAYS),
+            updatedAt = Instant.now().minus(1, ChronoUnit.DAYS)
         )
 
         // Now create an existing variation that references the existing product.

@@ -1,14 +1,17 @@
 package com.xu_store.uniform.dto
 
 import com.xu_store.uniform.model.Team
-import java.time.LocalDateTime
+import java.time.Instant
+
 
 data class TeamDetailResponse(
     val id: Long,
     val name: String,
     val shippingFee: Long,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val createdAt: Instant
+,
+    val updatedAt: Instant
+,
     val users: List<UserResponse>
 ) {
     companion object {

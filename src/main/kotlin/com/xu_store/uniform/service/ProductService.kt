@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
-import java.time.LocalDateTime
+import java.time.Instant
+
 import java.util.*
 
 
@@ -50,8 +51,8 @@ class ProductService (
         val newImage = ProductImage(
             product = product,
             imageUrl = imageUrl,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         product.images.add(newImage)
         val savedProduct = productRepository.save(product)

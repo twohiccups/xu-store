@@ -9,7 +9,8 @@ import com.xu_store.uniform.repository.UserRepository
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
+import java.time.Instant
+
 import java.util.*
 
 @Service
@@ -22,8 +23,8 @@ class TeamService(
         val team = Team(
             name = request.name,
             shippingFee = request.shippingFee,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         return teamRepository.save(team)
     }
@@ -35,7 +36,7 @@ class TeamService(
         val updatedTeam = existingTeam.copy(
             name = request.name,
             shippingFee = request.shippingFee,
-            updatedAt = LocalDateTime.now()
+            updatedAt = Instant.now()
         )
         return teamRepository.save(updatedTeam)
     }

@@ -1,7 +1,8 @@
 package com.xu_store.uniform.model
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import java.time.Instant
+
 
 @Entity
 @Table(name = "product_variations")
@@ -23,8 +24,8 @@ data class ProductVariation(
     val price: Long,
 
     @Column(name = "created_at")
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    var updatedAt: Instant = Instant.now()
 )

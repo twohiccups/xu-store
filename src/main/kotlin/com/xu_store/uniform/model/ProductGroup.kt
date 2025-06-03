@@ -1,6 +1,7 @@
 package com.xu_store.uniform.model
 
-import java.time.LocalDateTime
+import java.time.Instant
+
 import jakarta.persistence.*
 
 @Entity
@@ -13,10 +14,10 @@ data class ProductGroup(
     val name: String,
 
     @Column(name = "created_at")
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime = LocalDateTime.now(),
+    var updatedAt: Instant = Instant.now(),
 
     // List of products assigned to this group
     @OneToMany(mappedBy = "productGroup", cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)

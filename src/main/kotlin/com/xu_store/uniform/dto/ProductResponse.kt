@@ -2,7 +2,8 @@ package com.xu_store.uniform.dto
 
 import com.xu_store.uniform.model.Product
 import com.xu_store.uniform.model.ProductVariation
-import java.time.LocalDateTime
+import java.time.Instant
+
 
 
 data class ProductsResponse(
@@ -38,8 +39,10 @@ data class ProductVariationResponse(
     val variationName: String,
     val displayOrder: Int,
     val price: Long,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val createdAt: Instant
+,
+    val updatedAt: Instant
+
 ) {
     companion object {
         fun from(productVariation: ProductVariation): ProductVariationResponse {

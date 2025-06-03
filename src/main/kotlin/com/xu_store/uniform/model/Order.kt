@@ -1,7 +1,7 @@
 package com.xu_store.uniform.model
 
-import java.time.LocalDateTime
 import jakarta.persistence.*
+import java.time.Instant
 
 @Entity
 @Table(name = "orders")
@@ -29,7 +29,7 @@ data class Order(
 
     @Column(name = "first_name", nullable = false)
     val firstName: String,
-    
+
     @Column(name = "last_name", nullable = false)
     val lastName: String,
 
@@ -49,10 +49,10 @@ data class Order(
     val zipCode: String,
 
     @Column(name = "created_at")
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime = LocalDateTime.now(),
+    var updatedAt: Instant = Instant.now(),
 
     @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     val orderItems: MutableList<OrderItem> = mutableListOf(),

@@ -1,10 +1,13 @@
 package com.xu_store.uniform.dto
 
-import java.time.LocalDateTime
+import java.time.Instant
+
 
 data class CreateTeamRequest(
     val name: String,
     val shippingFee: Long,
-    val createdAt: LocalDateTime? = null,
-    val updatedAt: LocalDateTime? = null
+    val createdAt: Instant
+? = null,
+    val updatedAt: Instant
+? = null
 )

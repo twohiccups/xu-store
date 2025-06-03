@@ -1,6 +1,7 @@
 package com.xu_store.uniform.model
 
-import java.time.LocalDateTime
+import java.time.Instant
+
 import jakarta.persistence.*
 
 @Entity
@@ -16,10 +17,10 @@ data class Team(
     var shippingFee: Long = 0,
 
     @Column(name = "created_at")
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime = LocalDateTime.now(),
+    var updatedAt: Instant = Instant.now(),
 
     // Optional: One-to-many if you want to access Users from a Team.
     @OneToMany(mappedBy = "team", cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)

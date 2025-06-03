@@ -14,7 +14,8 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.LocalDateTime
+import java.time.Instant
+
 import java.util.Optional
 import java.util.Optional.of
 import kotlin.test.assertEquals
@@ -42,8 +43,8 @@ class OrderServiceTests {
             passwordHash = "hash",
             storeCredits = 1000,
             team = team,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
 
         // given: a valid order item request
@@ -75,8 +76,8 @@ class OrderServiceTests {
             product = product,
             variationName = "Variation",
             displayOrder = 0,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         whenever(productRepository.findProductVariationById(10))
             .thenReturn(of(productVariation))
@@ -116,8 +117,8 @@ class OrderServiceTests {
             passwordHash = "hash",
             storeCredits = 150,  // Too low for the order
             team = team,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
 
         // given: a valid order item request
@@ -149,8 +150,8 @@ class OrderServiceTests {
             product = product,
             variationName = "Variation",
             displayOrder = 0,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         whenever(productRepository.findProductVariationById(10))
             .thenReturn(of(productVariation))

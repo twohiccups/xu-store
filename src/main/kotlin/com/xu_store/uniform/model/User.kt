@@ -1,7 +1,8 @@
 package com.xu_store.uniform.model
 
 import jakarta.persistence.*
-import java.time.LocalDateTime
+import java.time.Instant
+
 
 @Entity
 @Table(name = "users")
@@ -25,10 +26,10 @@ data class User(
     val team: Team? = null,
 
     @Column(name = "created_at")
-    var createdAt: LocalDateTime = LocalDateTime.now(),
+    var createdAt: Instant = Instant.now(),
 
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime = LocalDateTime.now()
+    var updatedAt: Instant = Instant.now()
 
 
 )

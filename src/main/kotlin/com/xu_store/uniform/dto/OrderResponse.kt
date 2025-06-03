@@ -2,7 +2,8 @@ package com.xu_store.uniform.dto
 
 import com.xu_store.uniform.model.Order
 import com.xu_store.uniform.model.OrderStatus
-import java.time.LocalDateTime
+import java.time.Instant
+
 
 data class OrderResponse(
     val id: Long,
@@ -17,8 +18,10 @@ data class OrderResponse(
     val city: String,
     val state: String,
     val zipCode: String,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val createdAt: Instant
+,
+    val updatedAt: Instant
+
 ) {
     companion object {
         fun from(order: Order): OrderResponse {

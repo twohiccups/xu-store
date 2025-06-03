@@ -10,7 +10,8 @@ import com.xu_store.uniform.repository.ProductRepository
 import com.xu_store.uniform.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
+import java.time.Instant
+
 
 @Service
 class OrderService(
@@ -43,8 +44,8 @@ class OrderService(
             city = request.city,
             state = request.state,
             zipCode = request.zipCode,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
 
         // Build OrderItems with the new order reference
@@ -57,8 +58,8 @@ class OrderService(
                 productVariation = productVariation,
                 quantity = orderItemRequest.quantity,
                 unitPrice = productVariation.price,
-                createdAt = LocalDateTime.now(),
-                updatedAt = LocalDateTime.now()
+                createdAt = Instant.now(),
+                updatedAt = Instant.now()
             )
         }
 

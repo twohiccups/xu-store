@@ -12,7 +12,8 @@ import com.xu_store.uniform.repository.TeamRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
+import java.time.Instant
+
 import java.util.*
 
 @Service
@@ -31,8 +32,8 @@ class ProductGroupService(
         }
         val productGroup = ProductGroup(
             name = request.name,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
         return productGroupRepository.save(productGroup)
     }
@@ -46,7 +47,7 @@ class ProductGroupService(
             .orElseThrow { IllegalArgumentException("ProductGroup not found with id: $groupId") }
         val updatedGroup = existingGroup.copy(
             name = request.name,
-            updatedAt = LocalDateTime.now()
+            updatedAt = Instant.now()
         )
         return productGroupRepository.save(updatedGroup)
     }

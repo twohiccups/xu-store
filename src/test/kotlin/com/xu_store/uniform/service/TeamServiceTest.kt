@@ -12,7 +12,9 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.mockito.kotlin.whenever
-import java.time.LocalDateTime
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+
 import java.util.*
 
 class TeamServiceTest {
@@ -29,8 +31,8 @@ class TeamServiceTest {
   val teamToSave = Team(
    id = null,
    name = request.name,
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
+   createdAt = Instant.now(),
+   updatedAt = Instant.now()
   )
   val savedTeam = teamToSave.copy(id = 1L)
   whenever(teamRepository.save(any(Team::class.java))).thenReturn(savedTeam)
@@ -52,8 +54,8 @@ class TeamServiceTest {
   val existingTeam = Team(
    id = teamId,
    name = "Old Name",
-   createdAt = LocalDateTime.now().minusDays(1),
-   updatedAt = LocalDateTime.now().minusDays(1)
+   createdAt = Instant.now().minus(1, ChronoUnit.DAYS),
+   updatedAt = Instant.now().minus(1, ChronoUnit.DAYS)
   )
   val updateRequest = UpdateTeamRequest(name = "New Name", shippingFee = 0)
   whenever(teamRepository.findById(teamId)).thenReturn(Optional.of(existingTeam))
@@ -90,8 +92,8 @@ class TeamServiceTest {
   val team = Team(
    id = teamId,
    name = "Team A",
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
+   createdAt = Instant.now(),
+   updatedAt = Instant.now()
   )
   val user = User(
    id = userId,
@@ -100,8 +102,8 @@ class TeamServiceTest {
    role = "USER",
    storeCredits = 0,
    team = null,
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
+   createdAt = Instant.now(),
+   updatedAt = Instant.now()
   )
   whenever(teamRepository.findById(teamId)).thenReturn(Optional.of(team))
   whenever(userRepository.findById(userId)).thenReturn(Optional.of(user))
@@ -127,8 +129,8 @@ class TeamServiceTest {
   val team = Team(
    id = teamId,
    name = "Team A",
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
+   createdAt = Instant.now(),
+   updatedAt = Instant.now()
   )
   val user = User(
    id = userId,
@@ -137,8 +139,8 @@ class TeamServiceTest {
    role = "USER",
    storeCredits = 0,
    team = team,
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
+   createdAt = Instant.now(),
+   updatedAt = Instant.now()
   )
   whenever(userRepository.findById(userId)).thenReturn(Optional.of(user))
   whenever(userRepository.save(any(User::class.java))).thenAnswer { it.arguments[0] as User }
@@ -166,8 +168,8 @@ class TeamServiceTest {
    role = "USER",
    storeCredits = 0,
    team = null,
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
+   createdAt = Instant.now(),
+   updatedAt = Instant.now()
   )
   whenever(userRepository.findById(userId)).thenReturn(Optional.of(user))
 
@@ -185,8 +187,8 @@ class TeamServiceTest {
   val team = Team(
    id = teamId,
    name = "Team A",
-   createdAt = LocalDateTime.now(),
-   updatedAt = LocalDateTime.now()
+   createdAt = Instant.now(),
+   updatedAt = Instant.now()
   )
   whenever(teamRepository.findById(teamId)).thenReturn(Optional.of(team))
 }}

@@ -1,13 +1,16 @@
 package com.xu_store.uniform.dto
 
 import com.xu_store.uniform.model.ProductGroup
-import java.time.LocalDateTime
+import java.time.Instant
+
 
 data class ProductGroupResponse(
     val id: Long,
     val name: String,
-    val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val createdAt: Instant
+,
+    val updatedAt: Instant
+,
     val productIds: List<Long> = emptyList(),
     val teamIds: List<Long> = emptyList()
 ) {

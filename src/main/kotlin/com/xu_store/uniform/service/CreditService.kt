@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import java.time.Instant
 
 
 @Service
@@ -33,8 +34,8 @@ class CreditService (
             order = null,
             amount = creditTransactionRequest.amount,
             description = creditTransactionRequest.description,
-            createdAt = java.time.LocalDateTime.now(),
-            updatedAt = java.time.LocalDateTime.now()
+            createdAt = Instant.now(),
+            updatedAt = Instant.now()
         )
 
         val savedCreditTransaction = creditTransactionRepository.save(creditTransaction)

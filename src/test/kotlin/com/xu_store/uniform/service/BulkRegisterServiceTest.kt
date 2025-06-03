@@ -7,7 +7,8 @@ import com.xu_store.uniform.dto.BulkRegisterRequest
 import com.xu_store.uniform.model.Team
 import com.xu_store.uniform.model.User
 import org.mockito.kotlin.*
-import java.time.LocalDateTime
+import java.time.Instant
+
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -26,7 +27,7 @@ class BulkRegisterServiceTest {
     )
 
     private val teamId: Long = 1
-    private val team = Team(id = teamId, name = "Team X", createdAt = LocalDateTime.now(), updatedAt = LocalDateTime.now())
+    private val team = Team(id = teamId, name = "Team X", createdAt = Instant.now(), updatedAt = Instant.now())
 
     private val existingUser = User(
         id = 10,
@@ -35,8 +36,8 @@ class BulkRegisterServiceTest {
         role = "USER",
         storeCredits = 100,
         team = null,
-        createdAt = LocalDateTime.now(),
-        updatedAt = LocalDateTime.now()
+        createdAt = Instant.now(),
+        updatedAt = Instant.now()
     )
 
     private val newUser = User(
@@ -46,8 +47,8 @@ class BulkRegisterServiceTest {
         role = "USER",
         storeCredits = 0,
         team = null,
-        createdAt = LocalDateTime.now(),
-        updatedAt = LocalDateTime.now()
+        createdAt = Instant.now(),
+        updatedAt = Instant.now()
     )
 
     @Test
