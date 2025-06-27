@@ -44,7 +44,7 @@ class ProductGroupService(
 
     fun updateProductGroup(groupId: Long, request: UpdateProductGroupRequest): ProductGroup {
         val existingGroup = productGroupRepository.findById(groupId)
-            .orElseThrow { IllegalArgumentException("ProductGroup not found with id: $groupId") }
+            .orElseThrow { EntityNotFoundException("ProductGroup not found with id: $groupId") }
         val updatedGroup = existingGroup.copy(
             name = request.name,
             updatedAt = Instant.now()

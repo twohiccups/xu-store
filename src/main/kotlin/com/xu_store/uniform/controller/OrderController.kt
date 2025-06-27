@@ -1,11 +1,11 @@
 package com.xu_store.uniform.controller
 
-import com.xu_store.uniform.dto.CreateOrderRequest
-import com.xu_store.uniform.dto.CreateOrderResponse
-import com.xu_store.uniform.dto.OrderResponse
+import com.xu_store.uniform.dto.*
+import com.xu_store.uniform.model.OrderStatus
 import com.xu_store.uniform.security.CustomUserDetails
 import com.xu_store.uniform.service.OrderService
 import com.xu_store.uniform.service.UserService
+import org.springframework.data.domain.Page
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -46,21 +46,36 @@ class OrderController(
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @GetMapping
-    fun getAllOrders(): ResponseEntity<List<OrderResponse>> {
-        val orders = orderService.getAllOrders()
-        val response = orders.map { OrderResponse.from(it) }
-        return ResponseEntity.ok(response)
+    fun findOrders(
+        @RequestParam(required = false) statuses: List<OrderStatus>?,
+        @RequestParam(required = false) page: Int?,
+        @RequestParam(required = false) size: Int?,
+        @RequestParam(required = false) teamId: Long?
+    ): Page<OrderResponse> {
+        val x = 200
+
+        return orderService.listOrders(
+            statuses = statuses,
+            page = page ?: 0,
+            pageSize = size,
+            teamId = teamId
+        ).map(OrderResponse::from)
     }
 
+
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/team/{teamId}")
-    fun getAllOrdersByTeam(@PathVariable teamId: Long): ResponseEntity<List<OrderResponse>> {
-        val orders = orderService.getAllOrdersByTeam(teamId)
-        val response = orders.map { OrderResponse.from(it) }
-        return ResponseEntity.ok(response)
+    @PutMapping("/{id}/status")
+    fun updateStatus(
+        @PathVariable id: Long,
+        @RequestBody req: UpdateOrderStatusRequest
+    ): ResponseEntity<OrderResponse> {
+        val updated = orderService.updateOrderStatus(id, req.status)
+        return ResponseEntity.ok(OrderResponse.from(updated))
     }
+
+
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/my")
@@ -70,4 +85,6 @@ class OrderController(
         val response = orders.map { OrderResponse.from(it) }
         return ResponseEntity.ok(response)
     }
+
+
 }

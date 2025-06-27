@@ -2,8 +2,7 @@ package com.xu_store.uniform.model
 
 enum class OrderStatus {
     PENDING,
-    SHIPPED,
+    PROCESSING,
     COMPLETED,
-    ARCHIVED,
     CANCELLED
 }

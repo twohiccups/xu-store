@@ -6,8 +6,14 @@ import com.xu_store.uniform.model.OrderItem
 import com.xu_store.uniform.model.OrderStatus
 import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.OrderRepository
+import com.xu_store.uniform.repository.OrderSpecs
 import com.xu_store.uniform.repository.ProductRepository
 import com.xu_store.uniform.repository.UserRepository
+import jakarta.persistence.EntityNotFoundException
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -77,13 +83,42 @@ class OrderService(
     }
 
 
-    fun getAllOrders(): List<Order> {
-        return orderRepository.findAll()
+    @Transactional
+    fun updateOrderStatus(orderId: Long, newStatus: OrderStatus): Order {
+        val order = orderRepository.findById(orderId)
+            .orElseThrow { EntityNotFoundException("Order with id $orderId not found") }
+
+        val orderCopy = order.copy(
+            status = newStatus,
+            updatedAt = Instant.now()
+        )
+        return orderRepository.save(orderCopy)
     }
 
-    fun getAllOrdersByTeam(teamId: Long): List<Order> {
-        return orderRepository.findAllByTeamId(teamId)
+    fun listOrders(
+        statuses: List<OrderStatus>?,
+        page: Int,
+        pageSize: Int?,
+        teamId: Long?
+    ): Page<Order> {
+        var spec: Specification<Order> = Specification.where(null)
+
+        if (!statuses.isNullOrEmpty()) {
+            spec = spec.and(OrderSpecs().withStatuses(statuses))
+        }
+
+        if (teamId != null) {
+            spec = spec.and(OrderSpecs().withTeamId(teamId))
+        }
+
+        // Always apply pagination AFTER filters
+        val size = pageSize ?: Int.MAX_VALUE
+        val pageable = PageRequest.of(page, size, Sort.by("id").ascending())
+
+        return orderRepository.findAll(spec, pageable)
     }
+
+
 
     fun getOrdersByUserId(userId: Long): List<Order> {
         return orderRepository.findAllByUserId(userId)

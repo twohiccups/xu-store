@@ -8,6 +8,8 @@ import java.time.Instant
 data class OrderResponse(
     val id: Long,
     val userId: Long,
+    val teamId: Long,
+    val teamName: String,
     val orderItems: List<OrderItemResponse>,
     val totalAmount: Long,
     val status: OrderStatus,
@@ -18,8 +20,7 @@ data class OrderResponse(
     val city: String,
     val state: String,
     val zipCode: String,
-    val createdAt: Instant
-,
+    val createdAt: Instant,
     val updatedAt: Instant
 
 ) {
@@ -28,6 +29,8 @@ data class OrderResponse(
             return OrderResponse(
                 id = requireNotNull(order.id) { "Order Id must not be null"},
                 userId = order.user.id ?: 0L,
+                teamId = requireNotNull( order.team?.id),
+                teamName = order.team?.name ?: "",
                 orderItems = order.orderItems.map { orderItem -> OrderItemResponse.from(orderItem = orderItem)},
                 totalAmount = order.totalAmount,
                 status = order.status,
