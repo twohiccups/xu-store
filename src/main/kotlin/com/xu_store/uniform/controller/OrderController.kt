@@ -54,8 +54,6 @@ class OrderController(
         @RequestParam(required = false) size: Int?,
         @RequestParam(required = false) teamId: Long?
     ): Page<OrderResponse> {
-        val x = 200
-
         return orderService.listOrders(
             statuses = statuses,
             page = page ?: 0,
