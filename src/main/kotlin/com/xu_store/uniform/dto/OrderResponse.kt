@@ -8,6 +8,7 @@ import java.time.Instant
 data class OrderResponse(
     val id: Long,
     val userId: Long,
+    val username: String,
     val teamId: Long,
     val teamName: String,
     val orderItems: List<OrderItemResponse>,
@@ -29,6 +30,7 @@ data class OrderResponse(
             return OrderResponse(
                 id = requireNotNull(order.id) { "Order Id must not be null"},
                 userId = order.user.id ?: 0L,
+                username = order.user.email,
                 teamId = requireNotNull( order.team?.id),
                 teamName = order.team?.name ?: "",
                 orderItems = order.orderItems.map { orderItem -> OrderItemResponse.from(orderItem = orderItem)},
