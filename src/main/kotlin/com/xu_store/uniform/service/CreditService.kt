@@ -21,6 +21,7 @@ class CreditService (
         return creditTransactionRepository.findAllByUserId(userId)
     }
 
+
     private fun createCreditTransaction(userId: Long, amount: Long, description: String?, order: Order?) {
         val user = userService.getUserById(userId) // Efficient proxy, no full fetch
         creditTransactionRepository.save(
@@ -74,5 +75,20 @@ class CreditService (
             )
         }
     }
+
+    fun logOrderTransaction(userId: Long, amount: Long, description: String, order: Order) {
+        val user = userService.getUserById(userId)
+        creditTransactionRepository.save(
+            CreditTransaction(
+                user = user,
+                order = order,
+                amount = amount,
+                description = description,
+                createdAt = Instant.now(),
+                updatedAt = Instant.now()
+            )
+        )
+    }
+
 
 }

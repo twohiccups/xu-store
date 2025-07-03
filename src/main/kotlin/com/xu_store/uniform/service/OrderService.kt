@@ -27,22 +27,24 @@ class OrderService(
     private val creditService: CreditService // ✅ Injected
 ) {
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     fun placeOrder(request: CreateOrderRequest, userId: Long): Order {
         val user = userService.getUserById(userId)
         val team = user.team ?: throw IllegalStateException("User does not belong to a team")
         val shippingFee = team.shippingFee
 
-        // Calculate total for items
         val itemTotal = request.orderItems.sumOf {
             val price = productRepository.findVariationPrice(it.productVariationId)
                 .orElseThrow { IllegalArgumentException("Invalid product variation: ${it.productVariationId}") }
             it.quantity * price
         }
 
-        // Add shipping fee
         val totalAmount = itemTotal + shippingFee
 
+        // ✅ Attempt credit deduction BEFORE creating order
+        userService.deductUserCreditsOrThrow(userId, totalAmount)
+
+        // ✅ Only after deduction succeeds: build & save order
         val order = Order(
             user = user,
             team = team,
@@ -75,20 +77,16 @@ class OrderService(
                 updatedAt = Instant.now()
             )
         }
-
         order.orderItems.addAll(orderItems)
         val savedOrder = orderRepository.save(order)
 
-        // Deduct full amount (items + shipping)
-        creditService.deductCredits(
-            userId = userId,
-            amount = totalAmount,
-            description = "Order #${savedOrder.id} placed (includes shipping)",
-            order = savedOrder
-        )
+        // ✅ Log the transaction after order is created
+        creditService.logOrderTransaction(userId, -totalAmount, "Order #${savedOrder.id}", savedOrder)
 
         return savedOrder
     }
+
+
 
 
     @Transactional
