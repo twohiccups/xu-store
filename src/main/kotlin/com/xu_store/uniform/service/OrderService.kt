@@ -31,15 +31,22 @@ class OrderService(
     fun placeOrder(request: CreateOrderRequest, userId: Long): Order {
         val user = userService.getUserById(userId)
         val team = user.team ?: throw IllegalStateException("User does not belong to a team")
+        val shippingFee = team.shippingFee
 
-        val totalAmount = request.orderItems.sumOf {
-            it.quantity * productRepository.findVariationPrice(it.productVariationId).get()
+        // Calculate total for items
+        val itemTotal = request.orderItems.sumOf {
+            val price = productRepository.findVariationPrice(it.productVariationId)
+                .orElseThrow { IllegalArgumentException("Invalid product variation: ${it.productVariationId}") }
+            it.quantity * price
         }
+
+        // Add shipping fee
+        val totalAmount = itemTotal + shippingFee
 
         val order = Order(
             user = user,
             team = team,
-            shippingFee = requireNotNull(team.shippingFee),
+            shippingFee = shippingFee,
             totalAmount = totalAmount,
             status = OrderStatus.PENDING,
             firstName = request.firstName,
@@ -55,7 +62,9 @@ class OrderService(
 
         val orderItems = request.orderItems.map { item ->
             val product = productRepository.getProductByProductVariations_Id(item.productVariationId)
-            val variation = productRepository.findProductVariationById(item.productVariationId).get()
+            val variation = productRepository.findProductVariationById(item.productVariationId)
+                .orElseThrow { IllegalArgumentException("Invalid product variation: ${item.productVariationId}") }
+
             OrderItem(
                 order = order,
                 product = product,
@@ -70,16 +79,17 @@ class OrderService(
         order.orderItems.addAll(orderItems)
         val savedOrder = orderRepository.save(order)
 
-        // ✅ Safe deduction
+        // Deduct full amount (items + shipping)
         creditService.deductCredits(
             userId = userId,
             amount = totalAmount,
-            description = "Order #${savedOrder.id} placed",
+            description = "Order #${savedOrder.id} placed (includes shipping)",
             order = savedOrder
         )
 
         return savedOrder
     }
+
 
     @Transactional
     fun updateOrderStatus(orderId: Long, newStatus: OrderStatus): Order {
