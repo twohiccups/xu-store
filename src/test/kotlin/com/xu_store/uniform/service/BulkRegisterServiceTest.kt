@@ -70,7 +70,7 @@ class BulkRegisterServiceTest {
         bulkRegisterService.processRegistrationList(teamId, request)
 
         // Reset credits to 0
-        verify(creditService).adjustCredits(
+        verify(creditService).adjustCreditsByAdmin(
             CreditTransactionRequest(
                 userId = requireNotNull(existingUser.id),
                 amount = -100,
@@ -79,7 +79,7 @@ class BulkRegisterServiceTest {
         )
 
         // Set new credits
-        verify(creditService).adjustCredits(
+        verify(creditService).adjustCreditsByAdmin(
             CreditTransactionRequest(
                 userId = requireNotNull(existingUser.id),
                 amount = 300,
@@ -112,7 +112,7 @@ class BulkRegisterServiceTest {
         bulkRegisterService.processRegistrationList(teamId, request)
 
         // Verify credit assignment
-        verify(creditService).adjustCredits(
+        verify(creditService).adjustCreditsByAdmin(
             CreditTransactionRequest(
                 userId = requireNotNull(newUser.id),
                 amount = 200,

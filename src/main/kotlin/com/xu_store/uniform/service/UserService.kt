@@ -1,11 +1,13 @@
 package com.xu_store.uniform.service
 
 import com.xu_store.uniform.dto.ShoppingInfoResponse
+import com.xu_store.uniform.exception.NotEnoughCreditsException
 import com.xu_store.uniform.model.User
 import com.xu_store.uniform.repository.UserRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 @Service
@@ -41,6 +43,20 @@ class UserService (
             shippingFee = currentTeam.shippingFee,
             storeCredits = user.storeCredits,
         )
+    }
+
+    @Transactional
+    fun deductUserCreditsOrThrow(userId: Long, amount: Long) {
+        val rowsUpdated = userRepository.deductUserCredits(userId, amount)
+        if (rowsUpdated == 0) {
+            throw NotEnoughCreditsException("User $userId has insufficient store credits to deduct $amount")
+        }
+    }
+
+    @Transactional
+    fun addUserCreditsOrThrow(userId: Long, amount: Long) {
+        require(amount > 0) { "Amount must be positive for credit addition" }
+        userRepository.incrementUserCredits(userId, amount)
     }
 
 

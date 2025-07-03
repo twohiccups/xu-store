@@ -28,7 +28,7 @@ class OrderController(
     ): ResponseEntity<CreateOrderResponse> {
         val user = userService.getUserByEmail(currentUser.username)
         try {
-            val order = orderService.placeOrder(request, user)
+            val order = orderService.placeOrder(request, requireNotNull(user.id))
             val createOrderResponse = CreateOrderResponse(
                 success = true,
                 errorMessage = null,

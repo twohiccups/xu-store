@@ -9,4 +9,6 @@ interface CreditTransactionRepository : JpaRepository<CreditTransaction, Long> {
 
     fun findAllByUserId(userId: Long): List<CreditTransaction>
 
+
+
 }

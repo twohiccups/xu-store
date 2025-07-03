@@ -26,7 +26,7 @@ class BulkRegisterService(
                         amount = -existingUser.storeCredits,
                         description = "Bulk registration: email is re-registered, resetting the balance."
                     )
-                    creditService.adjustCredits(resetBalanceRequest)
+                    creditService.adjustCreditsByAdmin(resetBalanceRequest)
                     existingUser
                 }
                 else -> authService.registerUser(request.authRequest.username, request.authRequest.password)
@@ -43,7 +43,7 @@ class BulkRegisterService(
                 amount = request.storeCredits,
                 description = "Bulk registration: setting initial amount"
             )
-            creditService.adjustCredits(newBalanceRequest)
+            creditService.adjustCreditsByAdmin(newBalanceRequest)
             }
         }
     }

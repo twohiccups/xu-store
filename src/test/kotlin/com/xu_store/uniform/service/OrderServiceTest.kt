@@ -24,9 +24,10 @@ import kotlin.test.assertFailsWith
 class OrderServiceTests {
 
     private val orderRepository = mock(OrderRepository::class.java)
-    private val userRepository = mock(UserRepository::class.java)
+    private val userService = mock(UserService::class.java)
     private val productRepository = mock(ProductRepository::class.java)
-    private val orderService = OrderService(orderRepository, userRepository, productRepository)
+    private val creditService = mock(CreditService::class.java)
+    private val orderService = OrderService(orderRepository, userService, productRepository, creditService)
 
     @Test
     fun `given valid order request, when placeOrder is called, then order is saved and user credits updated`() {
@@ -90,7 +91,7 @@ class OrderServiceTests {
             }
 
         // when: placing the order
-        val placedOrder = orderService.placeOrder(request, user)
+        val placedOrder = orderService.placeOrder(request, requireNotNull(user.id))
 
         // then: verify the order was saved and returned with an id
         assertEquals(100, placedOrder.id)
@@ -98,7 +99,7 @@ class OrderServiceTests {
         // then: verify that the user's store credits have been updated
         // Calculation: Order total = 2 * 100L = 200L, so new credits = 1000L - 200L = 800L
         val userCaptor = argumentCaptor<User>()
-        verify(userRepository).save(userCaptor.capture())
+        verify(userService).saveUser(userCaptor.capture())
         assertEquals(800, userCaptor.firstValue.storeCredits)
         verify(orderRepository, times(1)).save(any<Order>())
     }
@@ -158,11 +159,11 @@ class OrderServiceTests {
 
         // when & then: calling placeOrder should throw an exception due to insufficient credits
         val ex = assertFailsWith<IllegalArgumentException> {
-            orderService.placeOrder(request, user)
+            orderService.placeOrder(request, requireNotNull(user.id))
         }
         assertEquals("Not enough store credits", ex.message)
 
         verify(orderRepository, never()).save(any<Order>())
-        verify(userRepository, never()).save(any<User>())
+        verify(userService, never()).saveUser(any<User>())
     }
 }

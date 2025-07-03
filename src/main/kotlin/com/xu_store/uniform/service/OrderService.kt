@@ -1,6 +1,7 @@
 package com.xu_store.uniform.service
 
 import com.xu_store.uniform.dto.CreateOrderRequest
+import com.xu_store.uniform.dto.CreditTransactionRequest
 import com.xu_store.uniform.model.Order
 import com.xu_store.uniform.model.OrderItem
 import com.xu_store.uniform.model.OrderStatus
@@ -18,29 +19,27 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
-
 @Service
 class OrderService(
     private val orderRepository: OrderRepository,
-    private val userRepository: UserRepository,
-    private val productRepository: ProductRepository // For validation; assume we check allowed items
+    private val userService: UserService,
+    private val productRepository: ProductRepository,
+    private val creditService: CreditService // ✅ Injected
 ) {
 
     @Transactional
-    fun placeOrder(request: CreateOrderRequest, user: User): Order {
+    fun placeOrder(request: CreateOrderRequest, userId: Long): Order {
+        val user = userService.getUserById(userId)
+        val team = user.team ?: throw IllegalStateException("User does not belong to a team")
 
         val totalAmount = request.orderItems.sumOf {
             it.quantity * productRepository.findVariationPrice(it.productVariationId).get()
         }
 
-        val difference = user.storeCredits - totalAmount
-        require(difference >= 0) { "Not enough store credits" }
-
-        // Create the order without order items first
         val order = Order(
             user = user,
-            team = user.team,
-            shippingFee = requireNotNull(user.team?.shippingFee),
+            team = team,
+            shippingFee = requireNotNull(team.shippingFee),
             totalAmount = totalAmount,
             status = OrderStatus.PENDING,
             firstName = request.firstName,
@@ -54,34 +53,33 @@ class OrderService(
             updatedAt = Instant.now()
         )
 
-        // Build OrderItems with the new order reference
-        val newOrderItems = request.orderItems.map { orderItemRequest ->
-            val product = productRepository.getProductByProductVariations_Id(orderItemRequest.productVariationId)
-            val productVariation = productRepository.findProductVariationById(orderItemRequest.productVariationId).get()
+        val orderItems = request.orderItems.map { item ->
+            val product = productRepository.getProductByProductVariations_Id(item.productVariationId)
+            val variation = productRepository.findProductVariationById(item.productVariationId).get()
             OrderItem(
-                order = order, // Use the unsaved order; cascade will take care of it
+                order = order,
                 product = product,
-                productVariation = productVariation,
-                quantity = orderItemRequest.quantity,
-                unitPrice = productVariation.price,
+                productVariation = variation,
+                quantity = item.quantity,
+                unitPrice = variation.price,
                 createdAt = Instant.now(),
                 updatedAt = Instant.now()
             )
         }
 
-        // Add the OrderItems to the Order
-        order.orderItems.addAll(newOrderItems)
+        order.orderItems.addAll(orderItems)
+        val savedOrder = orderRepository.save(order)
 
-        // Save the order (cascading will persist the order items)
-        val processedOrder = orderRepository.save(order)
+        // ✅ Safe deduction
+        creditService.deductCredits(
+            userId = userId,
+            amount = totalAmount,
+            description = "Order #${savedOrder.id} placed",
+            order = savedOrder
+        )
 
-        // Update user store credits
-        val userCopy = user.copy(storeCredits = difference)
-        userRepository.save(userCopy)
-
-        return processedOrder
+        return savedOrder
     }
-
 
     @Transactional
     fun updateOrderStatus(orderId: Long, newStatus: OrderStatus): Order {
@@ -111,14 +109,11 @@ class OrderService(
             spec = spec.and(OrderSpecs().withTeamId(teamId))
         }
 
-        // Always apply pagination AFTER filters
         val size = pageSize ?: Int.MAX_VALUE
         val pageable = PageRequest.of(page, size, Sort.by("id").ascending())
 
         return orderRepository.findAll(spec, pageable)
     }
-
-
 
     fun getOrdersByUserId(userId: Long): List<Order> {
         return orderRepository.findAllByUserId(userId)
