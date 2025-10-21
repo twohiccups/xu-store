@@ -37,22 +37,22 @@ class CreditService (
     }
 
     @Transactional
-    fun deductCredits(userId: Long, amount: Long, description: String?, order: Order) {
+    fun deductCredits(userId: Long, amount: Long, description: String?) {
         userService.deductUserCreditsOrThrow(userId, amount) // ✅ Atomic + safe
-        createCreditTransaction(userId, -amount, description, order)
+        createCreditTransaction(userId, -amount, description,  null)
     }
 
 
     @Transactional
-    fun adjustCreditsByAdmin(request: CreditTransactionRequest, order: Order? = null): CreditTransaction {
+    fun adjustCreditsByAdmin(request: CreditTransactionRequest): CreditTransaction {
         return if (request.amount < 0) {
             // ✅ Deduct using atomic-safe method (flip sign)
             val amountToDeduct = -request.amount
-            deductCredits(request.userId, amountToDeduct, request.description, order!!)
+            deductCredits(request.userId, amountToDeduct, request.description)
             // You may choose to return a placeholder transaction if needed, or fetch it
             CreditTransaction(
                 user = userService.getUserById(request.userId),
-                order = order,
+                order = null,
                 amount = request.amount,
                 description = request.description,
                 createdAt = Instant.now(),
@@ -66,7 +66,7 @@ class CreditService (
             return creditTransactionRepository.save(
                 CreditTransaction(
                     user = user,
-                    order = order,
+                    order = null,
                     amount = request.amount,
                     description = request.description,
                     createdAt = Instant.now(),
