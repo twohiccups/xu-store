@@ -2,7 +2,7 @@ package com.xu_store.uniform.service
 
 import com.xu_store.uniform.dto.CreateOrderRequest
 import com.xu_store.uniform.dto.OrderItemRequest
-import com.xu_store.uniform.exception.NotEnoughCreditsException
+import com.xu_store.uniform.exception.InsufficientCreditsException
 import com.xu_store.uniform.model.Order
 import com.xu_store.uniform.model.Product
 import com.xu_store.uniform.model.ProductVariation
@@ -170,11 +170,11 @@ class OrderServiceTests {
             .thenReturn(of(productVariation))
 
         val totalAmount = 210L
-        doThrow(NotEnoughCreditsException("User $userId has insufficient store credits to deduct $totalAmount"))
+        doThrow(InsufficientCreditsException("User $userId has insufficient store credits to deduct $totalAmount"))
             .whenever(userService).deductUserCreditsOrThrow(eq(userId), eq(totalAmount))
 
         // when & then: calling placeOrder should throw an exception due to insufficient credits
-        val ex = assertFailsWith<NotEnoughCreditsException> {
+        val ex = assertFailsWith<InsufficientCreditsException> {
             orderService.placeOrder(request, userId)
         }
         assertEquals("User $userId has insufficient store credits to deduct $totalAmount", ex.message)

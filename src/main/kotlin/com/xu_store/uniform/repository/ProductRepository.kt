@@ -42,10 +42,21 @@ interface ProductRepository: JpaRepository<Product, Long> {
     )
     fun findAllByTeamId(@Param("team_id") teamId: Long?): List<Product>
 
+
     fun getProductByProductVariations_Id(productVariationId: Long): Product
 
     @Query("SELECT pv FROM ProductVariation pv WHERE pv.id = :id")
-    fun findProductVariationById(@Param("id") id: Long): Optional<ProductVariation>
+    fun findProductVariationById(@Param("id") id: Long): ProductVariation?
+
+
+    // WHERE pv.id IN :ids list will be very small for each purchase
+    @Query("""
+        SELECT DISTINCT pv
+        FROM ProductVariation pv
+        JOIN FETCH pv.product
+        WHERE pv.id IN :ids
+    """)
+    fun findVariationsWithProductByIdIn(@Param("ids") ids: Set<Long>): List<ProductVariation>
 
 
 }

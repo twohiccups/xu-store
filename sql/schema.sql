@@ -116,16 +116,12 @@ CREATE TABLE orders (
 CREATE TABLE order_items (
     id BIGSERIAL PRIMARY KEY,
     order_id BIGINT NOT NULL,
-
     product_id BIGINT NOT NULL,
     product_variation_id BIGINT NOT NULL,
     quantity INT NOT NULL,
-
     unit_price BIGINT NOT NULL, -- captured at time of checkout (in cents)
-
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-
     CONSTRAINT fk_oi_order
         FOREIGN KEY (order_id) REFERENCES orders (id),
     CONSTRAINT fk_oi_products

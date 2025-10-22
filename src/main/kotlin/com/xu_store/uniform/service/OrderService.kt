@@ -2,14 +2,14 @@ package com.xu_store.uniform.service
 
 import com.xu_store.uniform.dto.CreateOrderRequest
 import com.xu_store.uniform.dto.CreditTransactionRequest
-import com.xu_store.uniform.model.Order
-import com.xu_store.uniform.model.OrderItem
-import com.xu_store.uniform.model.OrderStatus
-import com.xu_store.uniform.model.User
+import com.xu_store.uniform.exception.InvalidProductVariationException
+import com.xu_store.uniform.exception.UserWithoutTeamException
+import com.xu_store.uniform.model.*
 import com.xu_store.uniform.repository.OrderRepository
 import com.xu_store.uniform.repository.OrderSpecs
 import com.xu_store.uniform.repository.ProductRepository
 import com.xu_store.uniform.repository.UserRepository
+import com.xu_store.uniform.security.CustomUserDetails
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -24,27 +24,42 @@ class OrderService(
     private val orderRepository: OrderRepository,
     private val userService: UserService,
     private val productRepository: ProductRepository,
-    private val creditService: CreditService // ✅ Injected
+    private val creditService: CreditService
 ) {
 
-    @Transactional(rollbackFor = [Exception::class])
-    fun placeOrder(request: CreateOrderRequest, userId: Long): Order {
-        val user = userService.getUserById(userId)
-        val team = user.team ?: throw IllegalStateException("User does not belong to a team")
-        val shippingFee = team.shippingFee
+    @Transactional
+    fun placeOrder(request: CreateOrderRequest, currentUser: CustomUserDetails): Order {
+        val user = userService.getUserByEmail(currentUser.username)
+        val userId = requireNotNull(user.id)
 
-        val itemTotal = request.orderItems.sumOf {
-            val price = productRepository.findVariationPrice(it.productVariationId)
-                .orElseThrow { IllegalArgumentException("Invalid product variation: ${it.productVariationId}") }
-            it.quantity * price
+        // Users are tethered to teams, where shipping fees are fixed per team
+        val team = user.team ?: throw UserWithoutTeamException(userId)
+
+        val variationIds: Set<Long> = request.orderItems.map { it.productVariationId }.toSet()
+        require(variationIds.isNotEmpty()) { "orderItems cannot be empty" }
+
+        val productVariations: List<ProductVariation> = productRepository.findVariationsWithProductByIdIn(variationIds)
+        val productVariationsMap: Map<Long, ProductVariation> = productVariations.associateBy { requireNotNull(it.id) }
+
+        if (variationIds.size != productVariationsMap.size) {
+            // Some requested items are not in the db
+            val missing: Set<Long> = variationIds - productVariationsMap.keys
+            throw InvalidProductVariationException(missing.first())
         }
 
+        val itemTotal = request.orderItems.sumOf {
+            require(it.quantity > 0) {"Item quantity must be greater than zero"}
+            it.quantity.toLong() * requireNotNull(productVariationsMap[it.productVariationId]).price
+        }
+
+        val shippingFee = team.shippingFee
         val totalAmount = itemTotal + shippingFee
 
-        // ✅ Attempt credit deduction BEFORE creating order
+        // Attempt credit deduction before creating order
         userService.deductUserCreditsOrThrow(userId, totalAmount)
 
-        // ✅ Only after deduction succeeds: build & save order
+        // Build and save order only if deduction succeeds:
+        val now = Instant.now()
         val order = Order(
             user = user,
             team = team,
@@ -58,31 +73,27 @@ class OrderService(
             city = request.city,
             state = request.state,
             zipCode = request.zipCode,
-            createdAt = Instant.now(),
-            updatedAt = Instant.now()
+            createdAt = now,
+            updatedAt = now
         )
 
         val orderItems = request.orderItems.map { item ->
-            val product = productRepository.getProductByProductVariations_Id(item.productVariationId)
-            val variation = productRepository.findProductVariationById(item.productVariationId)
-                .orElseThrow { IllegalArgumentException("Invalid product variation: ${item.productVariationId}") }
-
+            val productVariation = productVariationsMap.getValue(item.productVariationId)
             OrderItem(
                 order = order,
-                product = product,
-                productVariation = variation,
+                product = productVariation.product,
+                productVariation = productVariation,
                 quantity = item.quantity,
-                unitPrice = variation.price,
-                createdAt = Instant.now(),
-                updatedAt = Instant.now()
+                unitPrice = productVariation.price,
+                createdAt = now,
+                updatedAt = now
             )
         }
         order.orderItems.addAll(orderItems)
         val savedOrder = orderRepository.save(order)
 
-        // ✅ Log the transaction after order is created
+        // By this point order exists, now we can log the transaction
         creditService.logOrderTransaction(userId, -totalAmount, "Order #${savedOrder.id}", savedOrder)
-
         return savedOrder
     }
 
