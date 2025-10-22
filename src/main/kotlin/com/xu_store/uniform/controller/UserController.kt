@@ -29,7 +29,7 @@ class UserController(
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/shopping-info")
     fun getCurrentShoppingInfo(@AuthenticationPrincipal currentUser: CustomUserDetails): ResponseEntity<ShoppingInfoResponse> {
-        val user = userService.getUserByEmail(currentUser.username)
+        val user = userService.getUserById(currentUser.userId)
         val shoppingInfoResponse = userService.getCurrentShoppingInfo(user)
         return ResponseEntity.ok(
             shoppingInfoResponse

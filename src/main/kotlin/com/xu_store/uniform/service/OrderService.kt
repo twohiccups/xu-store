@@ -29,8 +29,8 @@ class OrderService(
 
     @Transactional
     fun placeOrder(request: CreateOrderRequest, currentUser: CustomUserDetails): Order {
-        val user = userService.getUserByEmail(currentUser.username)
-        val userId = requireNotNull(user.id)
+        val userId = currentUser.userId
+        val user = userService.getUserById(userId)
 
         // Users are tethered to teams, where shipping fees are fixed per team
         val team = user.team ?: throw UserWithoutTeamException(userId)

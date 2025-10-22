@@ -23,7 +23,7 @@ class ProductController(
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/current")
     fun getProductsForCurrentUser(@AuthenticationPrincipal currentUser: CustomUserDetails): ResponseEntity<List<ProductResponse>> {
-        val user = userService.getUserByEmail(currentUser.username)
+        val user = userService.getUserById(currentUser.userId)
         val products = productService.getProductsForUserByEmail(user.email)
         return ResponseEntity.ok(products.map { ProductResponse.from(it) })
     }

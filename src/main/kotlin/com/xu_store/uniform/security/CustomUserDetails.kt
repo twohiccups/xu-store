@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails
 
 class CustomUserDetails(private val user: User) : UserDetails {
 
+    val userId: Long = user.id ?: error("Authenticated user must have a persisted id")
+
     fun getRole(): String = user.role.toString()  // or user.role.toString() if it's not an enum
 
     override fun getAuthorities(): Collection<GrantedAuthority> {

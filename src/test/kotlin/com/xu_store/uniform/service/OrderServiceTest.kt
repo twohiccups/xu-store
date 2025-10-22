@@ -80,7 +80,7 @@ class OrderServiceTest {
             )
         )
 
-        whenever(userService.getUserByEmail(user.email)).thenReturn(user)
+        whenever(userService.getUserById(user.id!!)).thenReturn(user)
         whenever(productRepository.findVariationsWithProductByIdIn(setOf(101L))).thenReturn(listOf(variation))
 
         val savedOrderCaptor = argumentCaptor<Order>()
@@ -158,7 +158,7 @@ class OrderServiceTest {
             updatedAt = Instant.now()
         )
 
-        whenever(userService.getUserByEmail(user.email)).thenReturn(user)
+        whenever(userService.getUserById(user.id!!)).thenReturn(user)
         whenever(productRepository.findVariationsWithProductByIdIn(setOf(201L))).thenReturn(listOf(variation))
 
         val orderTotal = 5000L + 1000L
@@ -199,7 +199,7 @@ class OrderServiceTest {
             )
         )
 
-        whenever(userService.getUserByEmail(user.email)).thenReturn(user)
+        whenever(userService.getUserById(user.id!!)).thenReturn(user)
 
         assertFailsWith<UserWithoutTeamException> {
             service.placeOrder(request, currentUser)
@@ -235,7 +235,7 @@ class OrderServiceTest {
         )
         val currentUser = CustomUserDetails(user)
 
-        whenever(userService.getUserByEmail(user.email)).thenReturn(user)
+        whenever(userService.getUserById(user.id!!)).thenReturn(user)
         whenever(productRepository.findVariationsWithProductByIdIn(setOf(99L))).thenReturn(emptyList())
 
         assertFailsWith<InvalidProductVariationException> {
@@ -281,7 +281,7 @@ class OrderServiceTest {
         )
         val currentUser = CustomUserDetails(user)
 
-        whenever(userService.getUserByEmail(user.email)).thenReturn(user)
+        whenever(userService.getUserById(user.id!!)).thenReturn(user)
         whenever(productRepository.findVariationsWithProductByIdIn(setOf(321L))).thenReturn(listOf(variation))
 
         assertFailsWith<IllegalArgumentException> {

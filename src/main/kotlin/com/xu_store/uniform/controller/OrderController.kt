@@ -63,7 +63,7 @@ class OrderController(
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/my")
     fun getMyOrders(@AuthenticationPrincipal currentUser: CustomUserDetails): ResponseEntity<List<OrderResponse>> {
-        val user = userService.getUserByEmail(currentUser.username)
+        val user = userService.getUserById(currentUser.userId)
         val orders = orderService.getOrdersByUserId(requireNotNull(user.id))
         val response = orders.map { OrderResponse.from(it) }
         return ResponseEntity.ok(response)
